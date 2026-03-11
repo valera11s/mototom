@@ -1,0 +1,234 @@
+{
+    "store":  {
+                  "name":  "MotoTom",
+                  "phone":  "+7 (495) 129-90-77",
+                  "email":  "sales@mototom.ru",
+                  "address":  "Москва, ул. Дубининская, д. 22",
+                  "freeShippingFrom":  50000
+              },
+    "categories":  [
+                       "Шлемы",
+                       "Куртки",
+                       "Перчатки",
+                       "Ботинки",
+                       "Защита",
+                       "Аксессуары"
+                   ],
+    "products":  [
+                     {
+                         "id":  "helmet-shoei-rf1400-matte",
+                         "name":  "Shoei RF-1400 Матовый",
+                         "category":  "Шлемы",
+                         "brand":  "Shoei",
+                         "price":  54900,
+                         "oldPrice":  59900,
+                         "rating":  4.9,
+                         "sizes":  [
+                                       "S",
+                                       "M",
+                                       "L",
+                                       "XL"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1558981852-426c6c22a060?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  true,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "helmet-agv-k6-red",
+                         "name":  "AGV K6 S Красный",
+                         "category":  "Шлемы",
+                         "brand":  "AGV",
+                         "price":  47500,
+                         "rating":  4.8,
+                         "sizes":  [
+                                       "M",
+                                       "L",
+                                       "XL"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  true,
+                         "isNew":  true
+                     },
+                     {
+                         "id":  "helmet-arai-corsair-x-carbon",
+                         "name":  "Arai Corsair-X Карбон",
+                         "category":  "Шлемы",
+                         "brand":  "Arai",
+                         "price":  72000,
+                         "rating":  4.9,
+                         "sizes":  [
+                                       "M",
+                                       "L"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1618172193763-c511deb635ca?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  false,
+                         "isNew":  true
+                     },
+                     {
+                         "id":  "jacket-alpinestars-leather",
+                         "name":  "Куртка Alpinestars GP Plus",
+                         "category":  "Куртки",
+                         "brand":  "Alpinestars",
+                         "price":  38900,
+                         "rating":  4.7,
+                         "sizes":  [
+                                       "M",
+                                       "L",
+                                       "XL"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1578946956088-940c3b502864?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  true,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "gloves-sp8-black",
+                         "name":  "Alpinestars SP-8 Перчатки",
+                         "category":  "Перчатки",
+                         "brand":  "Alpinestars",
+                         "price":  12900,
+                         "rating":  4.7,
+                         "sizes":  [
+                                       "S",
+                                       "M",
+                                       "L"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  true,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "boots-tcx-street",
+                         "name":  "Мотоботы TCX Street Ace",
+                         "category":  "Ботинки",
+                         "brand":  "TCX",
+                         "price":  21900,
+                         "rating":  4.6,
+                         "sizes":  [
+                                       "41",
+                                       "42",
+                                       "43",
+                                       "44"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  false,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "protection-back-d3o",
+                         "name":  "Защита спины D3O Air",
+                         "category":  "Защита",
+                         "brand":  "D3O",
+                         "price":  9900,
+                         "rating":  4.5,
+                         "sizes":  [
+                                       "M",
+                                       "L"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1563077901-c5b45f48c5a2?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  false,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "access-comms-cardo",
+                         "name":  "Cardo Packtalk Edge",
+                         "category":  "Аксессуары",
+                         "brand":  "Cardo",
+                         "price":  42900,
+                         "rating":  4.8,
+                         "sizes":  [
+                                       "One Size"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  false,
+                         "isNew":  true
+                     },
+                     {
+                         "id":  "jacket-revit-eclipse",
+                         "name":  "REV\u0027IT! Eclipse 2",
+                         "category":  "Куртки",
+                         "brand":  "REV\u0027IT!",
+                         "price":  27400,
+                         "rating":  4.6,
+                         "sizes":  [
+                                       "S",
+                                       "M",
+                                       "L",
+                                       "XL"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1582582429416-98df744f2422?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  true,
+                         "isNew":  false
+                     },
+                     {
+                         "id":  "helmet-hjc-rpha71-white",
+                         "name":  "HJC RPHA 71 Белый",
+                         "category":  "Шлемы",
+                         "brand":  "HJC",
+                         "price":  35200,
+                         "rating":  4.6,
+                         "sizes":  [
+                                       "S",
+                                       "M",
+                                       "L",
+                                       "XL"
+                                   ],
+                         "image":  "https://images.unsplash.com/photo-1558980394-34764db95d98?auto=format\u0026fit=crop\u0026w=900\u0026q=80",
+                         "featured":  false,
+                         "isNew":  false
+                     }
+                 ],
+    "sets":  [
+                 {
+                     "id":  "dark-rider",
+                     "slug":  "dark-rider",
+                     "name":  "Dark Rider",
+                     "description":  "Полная защита в тёмном стиле",
+                     "coverImage":  "https://images.unsplash.com/photo-1569931327952-8cbcd1734ca8?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI2NTU1NjB8\u0026ixlib=rb-4.1.0\u0026q=80\u0026w=1080",
+                     "productIds":  [
+                                        "helmet-shoei-rf1400-matte",
+                                        "jacket-alpinestars-leather",
+                                        "gloves-sp8-black",
+                                        "boots-tcx-street"
+                                    ]
+                 },
+                 {
+                     "id":  "urban-warrior",
+                     "slug":  "urban-warrior",
+                     "name":  "Urban Warrior",
+                     "description":  "Городской стиль с максимальной защитой",
+                     "coverImage":  "https://images.unsplash.com/photo-1720211466012-dba5663d612d?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI2NTU1ODd8\u0026ixlib=rb-4.1.0\u0026q=80\u0026w=1080",
+                     "productIds":  [
+                                        "helmet-hjc-rpha71-white",
+                                        "jacket-revit-eclipse",
+                                        "gloves-sp8-black"
+                                    ]
+                 },
+                 {
+                     "id":  "night-cruiser",
+                     "slug":  "night-cruiser",
+                     "name":  "Night Cruiser",
+                     "description":  "Для вечерних поездок по городу",
+                     "coverImage":  "https://images.unsplash.com/photo-1762769665979-52caeade14a1?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI2NTU2MDN8\u0026ixlib=rb-4.1.0\u0026q=80\u0026w=1080",
+                     "productIds":  [
+                                        "helmet-arai-corsair-x-carbon",
+                                        "protection-back-d3o",
+                                        "access-comms-cardo",
+                                        "jacket-revit-eclipse",
+                                        "gloves-sp8-black"
+                                    ]
+                 },
+                 {
+                     "id":  "road-king",
+                     "slug":  "road-king",
+                     "name":  "Road King",
+                     "description":  "Классический образ для дальних поездок",
+                     "coverImage":  "https://images.unsplash.com/photo-1758615590275-9a46daafc4f0?crop=entropy\u0026cs=tinysrgb\u0026fit=max\u0026fm=jpg\u0026ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzI2NTU2MTl8\u0026ixlib=rb-4.1.0\u0026q=80\u0026w=1080",
+                     "productIds":  [
+                                        "helmet-shoei-rf1400-matte",
+                                        "jacket-revit-eclipse",
+                                        "boots-tcx-street",
+                                        "access-comms-cardo"
+                                    ]
+                 }
+             ]
+}
