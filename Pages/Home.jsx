@@ -1,9 +1,10 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingBag, Truck, ShieldCheck, RotateCcw, Headphones, ArrowRight } from 'lucide-react';
+import { Star, ShoppingBag, Truck, ShieldCheck, RotateCcw, Headphones, ArrowRight, Send } from 'lucide-react';
 import { useMotoStore } from '../src/data/motoStore.jsx';
 import { createPageUrl, createProductUrl } from '../src/utils.js';
 import Seo from '../src/components/Seo.jsx';
+import avitoReviews from '../src/data/avitoReviews.json';
 
 const HERO_SLIDES = [
   {
@@ -163,6 +164,11 @@ const TRUST_ITEMS = [
   { title: 'Простой возврат', subtitle: '30 дней на возврат', Icon: RotateCcw },
   { title: 'Поддержка', subtitle: 'Райдеры помогают райдерам', Icon: Headphones },
 ];
+const TELEGRAM_CHANNEL_URL = 'https://t.me/+kpx4Cn3SqUNkODIy';
+const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
+const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
+const YANDEX_RATING = '4.9';
+const YANDEX_REVIEWS_COUNT = '500+ отзывов';
 const MARQUEE_BRANDS = ['Shoei', 'Alpinestars', 'Dainese', 'AGV', 'REVIT', 'BELL', 'ARAI', 'ICON', 'SENA', 'SHARK', 'SCHUBERTH', 'HJC'];
 const READY_LOOKS_DOMINO_INTERVAL_MS = 1800;
 
@@ -245,6 +251,7 @@ export default function Home() {
   const [readyLookSlides, setReadyLookSlides] = useState([]);
   const [activeReadyLook, setActiveReadyLook] = useState(0);
   const [addedPulseByProduct, setAddedPulseByProduct] = useState({});
+  const [expandedReviewMap, setExpandedReviewMap] = useState({});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -401,6 +408,7 @@ export default function Home() {
   }, [products]);
 
   const currentSlide = HERO_SLIDES[slide];
+  const activeReviews = React.useMemo(() => (Array.isArray(avitoReviews) ? avitoReviews.slice(0, 6) : []), []);
 
   const triggerAddAnimation = (productId) => {
     setAddedPulseByProduct((prev) => ({ ...prev, [productId]: true }));
@@ -607,6 +615,40 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="px-4 pb-10 sm:px-6 sm:pb-12 lg:px-10 xl:px-20">
+        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-5 rounded-2xl border border-[#1E1E22] bg-[#101014] p-6 sm:p-8 lg:grid-cols-2 lg:items-center">
+          <div>
+            <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">Хотите первыми узнавать о новых поступлениях?</h3>
+            <p className="mt-3 max-w-[560px] text-sm leading-6 text-[#A0A0A5]">
+              В нашем Telegram-канале мы публикуем свежие поступления, делимся важными обновлениями и показываем интересные позиции раньше, чем они появляются на сайте.
+            </p>
+            <a
+              href={TELEGRAM_CHANNEL_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 inline-flex items-center gap-2 rounded-md bg-[#54A0C5] px-5 py-3 text-sm font-semibold text-[#FAFAF9] hover:bg-[#4a94b7]"
+            >
+              <Send className="h-4 w-4" />
+              Подписаться на Telegram
+            </a>
+          </div>
+
+          <a
+            href={TELEGRAM_CHANNEL_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="block rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5 hover:border-[#2F6177]"
+          >
+            <p className="text-xs uppercase tracking-[0.15em] text-[#54A0C5]">Пример поста</p>
+            <p className="mt-3 text-base font-semibold text-[#FAFAF9]">Новая партия экипировки уже в наличии</p>
+            <p className="mt-2 text-sm leading-6 text-[#A0A0A5]">
+              Шлемы, куртки и перчатки в актуальных размерах. Переходите в канал, чтобы посмотреть все позиции и забронировать первыми.
+            </p>
+            <p className="mt-4 text-xs text-[#6B6B70]">@mototom • Telegram</p>
+          </a>
+        </div>
+      </section>
+
       <section data-reveal className="reveal-on-scroll border-y border-[#1E1E22] bg-[#111114] px-4 py-10 sm:px-6 lg:px-10 xl:px-20">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {TRUST_ITEMS.map((item) => (
@@ -618,6 +660,110 @@ export default function Home() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
+        <div className="mx-auto w-full max-w-[1440px] rounded-2xl border border-[#1E1E22] bg-[#121216] p-6 sm:p-8">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">Отзывы покупателей</h3>
+              <p className="mt-1 text-sm text-[#A0A0A5]">Отзывы с Avito и Яндекс Карт</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={AVITO_REVIEWS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-md border border-[#2A2A2E] px-3 py-2 text-xs font-medium text-[#A0A0A5] hover:text-[#FAFAF9]"
+              >
+                Avito
+              </a>
+              <a
+                href={YANDEX_REVIEWS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center rounded-md border border-[#2A2A2E] px-3 py-2 text-xs font-medium text-[#A0A0A5] hover:text-[#FAFAF9]"
+              >
+                Яндекс Карты
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {activeReviews.map((review, idx) => {
+              const isExpanded = Boolean(expandedReviewMap[idx]);
+              const reviewText = String(review.text || '');
+              const author = review.name || review.author || 'Покупатель';
+              const isLong = reviewText.length > 100;
+              const visibleText = isExpanded || !isLong ? reviewText : `${reviewText.slice(0, 100)}...`;
+              return (
+                <article key={`${author}-${idx}`} className="rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border border-[#2A2A2E] bg-[#17171B]">
+                      {review.avatarUrl ? (
+                        <img src={review.avatarUrl} alt={author} loading="lazy" className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-[#FAFAF9]">
+                          {String(author).slice(0, 1).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[#FAFAF9]">{author}</p>
+                      <div className="mt-1 flex items-center gap-1 text-[#FBBF24]">
+                        {Array.from({ length: 5 }).map((_, starIdx) => (
+                          <Star key={starIdx} className={`h-3.5 w-3.5 ${starIdx < Number(review.rating || 0) ? 'fill-current' : 'text-[#3A3A3F]'}`} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-xs font-medium uppercase tracking-[0.12em] text-[#6B6B70]">{review.product}</p>
+                  <p className="mt-3 text-sm leading-6 text-[#D0D0D4]">“{visibleText}”</p>
+                  {isLong ? (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [idx]: !prev[idx] }))}
+                      className="mt-2 text-xs font-medium text-[#54A0C5] hover:text-[#79b7d3]"
+                    >
+                      {isExpanded ? 'Свернуть' : 'Читать полностью'}
+                    </button>
+                  ) : null}
+                  <div className="mt-4">
+                    <a
+                      href={AVITO_REVIEWS_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs text-[#A0A0A5] hover:text-[#FAFAF9]"
+                    >
+                      Отзывы на Avito
+                    </a>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <a
+            href={YANDEX_REVIEWS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 block rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5 hover:border-[#2F6177]"
+          >
+            <p className="text-xs uppercase tracking-[0.15em] text-[#54A0C5]">Яндекс Карты</p>
+            <div className="mt-3 flex items-center gap-3">
+              <span className="text-3xl font-bold text-[#FAFAF9]">{YANDEX_RATING}</span>
+              <div className="flex items-center gap-1 text-[#FBBF24]">
+                {Array.from({ length: 5 }).map((_, idx) => (
+                  <Star key={`yandex-star-${idx}`} className="h-4 w-4 fill-current" />
+                ))}
+              </div>
+              <span className="text-sm text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-[#A0A0A5]">
+              Смотрите полный список отзывов и оценок на Яндекс Картах.
+            </p>
+          </a>
         </div>
       </section>
     </div>
