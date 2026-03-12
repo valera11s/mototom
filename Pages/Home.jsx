@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingBag, Truck, ShieldCheck, RotateCcw, Headphones, ArrowRight, Send } from 'lucide-react';
+import { Star, ShoppingBag, Truck, ShieldCheck, RotateCcw, Headphones, ArrowRight, ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import { useMotoStore } from '../src/data/motoStore.jsx';
 import { createPageUrl, createProductUrl } from '../src/utils.js';
 import Seo from '../src/components/Seo.jsx';
@@ -167,7 +167,7 @@ const TRUST_ITEMS = [
 const TELEGRAM_CHANNEL_URL = 'https://t.me/+kpx4Cn3SqUNkODIy';
 const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
 const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
-const YANDEX_RATING = '4.9';
+const YANDEX_RATING = '5.0';
 const YANDEX_REVIEWS_COUNT = '500+ отзывов';
 const MARQUEE_BRANDS = ['Shoei', 'Alpinestars', 'Dainese', 'AGV', 'REVIT', 'BELL', 'ARAI', 'ICON', 'SENA', 'SHARK', 'SCHUBERTH', 'HJC'];
 const READY_LOOKS_DOMINO_INTERVAL_MS = 1800;
@@ -251,6 +251,7 @@ export default function Home() {
   const [readyLookSlides, setReadyLookSlides] = useState([]);
   const [activeReadyLook, setActiveReadyLook] = useState(0);
   const [addedPulseByProduct, setAddedPulseByProduct] = useState({});
+  const [reviewIndex, setReviewIndex] = useState(0);
   const [expandedReviewMap, setExpandedReviewMap] = useState({});
 
   useEffect(() => {
@@ -382,6 +383,11 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [activeReadyLook, readyLooksData]);
 
+  useEffect(() => {
+    if (activeReviews.length === 0) return;
+    setReviewIndex((prev) => (prev >= activeReviews.length ? 0 : prev));
+  }, [activeReviews.length]);
+
   const visibleFeatured = React.useMemo(() => {
     const source = Array.isArray(products) ? products : [];
     const prioritized = source.filter((item) => item.featured || item.popular || item.on_sale);
@@ -409,6 +415,7 @@ export default function Home() {
 
   const currentSlide = HERO_SLIDES[slide];
   const activeReviews = React.useMemo(() => (Array.isArray(avitoReviews) ? avitoReviews.slice(0, 6) : []), []);
+  const activeReview = activeReviews[reviewIndex] || null;
 
   const triggerAddAnimation = (productId) => {
     setAddedPulseByProduct((prev) => ({ ...prev, [productId]: true }));
@@ -649,6 +656,113 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
+        <div className="mx-auto w-full max-w-[1440px] rounded-2xl border border-[#1E1E22] bg-[#121216] p-6 sm:p-8">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">Отзывы покупателей</h3>
+              <p className="mt-1 text-sm text-[#A0A0A5]">Отзывы с Avito</p>
+            </div>
+            <div className="inline-flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev - 1 + activeReviews.length) % activeReviews.length)}
+                disabled={activeReviews.length === 0}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#2A2A2E] text-[#A0A0A5] hover:text-[#FAFAF9] disabled:opacity-40"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev + 1) % activeReviews.length)}
+                disabled={activeReviews.length === 0}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#2A2A2E] text-[#A0A0A5] hover:text-[#FAFAF9] disabled:opacity-40"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+
+          {activeReview ? (
+            <article className="rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="h-12 w-12 overflow-hidden rounded-full border border-[#2A2A2E] bg-[#17171B]">
+                  {activeReview.avatarUrl ? (
+                    <img src={activeReview.avatarUrl} alt={activeReview.name || activeReview.author || 'Покупатель'} loading="lazy" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-[#FAFAF9]">
+                      {String(activeReview.name || activeReview.author || '?').slice(0, 1).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[#FAFAF9]">{activeReview.name || activeReview.author || 'Покупатель'}</p>
+                  <div className="mt-1 flex items-center gap-1 text-[#FBBF24]">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Star key={`avito-star-${idx}`} className={`h-3.5 w-3.5 ${idx < Number(activeReview.rating || 0) ? 'fill-current' : 'text-[#3A3A3F]'}`} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <p className="mt-4 text-xs font-medium uppercase tracking-[0.12em] text-[#6B6B70]">{activeReview.product}</p>
+              <p className="mt-3 text-sm leading-6 text-[#D0D0D4]">
+                “{(expandedReviewMap[reviewIndex] || String(activeReview.text || '').length <= 100)
+                  ? String(activeReview.text || '')
+                  : `${String(activeReview.text || '').slice(0, 100)}...` }”
+              </p>
+              {String(activeReview.text || '').length > 100 ? (
+                <button
+                  type="button"
+                  onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [reviewIndex]: !prev[reviewIndex] }))}
+                  className="mt-2 text-xs font-medium text-[#54A0C5] hover:text-[#79b7d3]"
+                >
+                  {expandedReviewMap[reviewIndex] ? 'Свернуть' : 'Читать полностью'}
+                </button>
+              ) : null}
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <a
+                  href={AVITO_REVIEWS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-[#A0A0A5] hover:text-[#FAFAF9]"
+                >
+                  Отзывы на Avito
+                </a>
+                <div className="flex items-center gap-1.5">
+                  {activeReviews.map((_, idx) => (
+                    <button
+                      key={`review-dot-${idx}`}
+                      type="button"
+                      onClick={() => setReviewIndex(idx)}
+                      className={`h-1.5 rounded-full transition-all ${idx === reviewIndex ? 'w-5 bg-[#54A0C5]' : 'w-1.5 bg-[#3A3A3F]'}`}
+                      aria-label={`Отзыв ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </article>
+          ) : null}
+
+          <a
+            href={YANDEX_REVIEWS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-4 inline-flex w-full items-center justify-between rounded-lg border border-[#1E1E22] bg-[#0D0D0F] px-4 py-3 hover:border-[#2F6177]"
+          >
+            <div className="flex items-center gap-2.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#54A0C5]">Яндекс Карты</span>
+              <span className="text-base font-bold text-[#FAFAF9]">{YANDEX_RATING}</span>
+              <div className="flex items-center gap-0.5 text-[#FBBF24]">
+                {Array.from({ length: 5 }).map((_, idx) => (
+                  <Star key={`yandex-star-${idx}`} className="h-3.5 w-3.5 fill-current" />
+                ))}
+              </div>
+            </div>
+            <span className="text-xs text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
+          </a>
+        </div>
+      </section>
+
       <section data-reveal className="reveal-on-scroll border-y border-[#1E1E22] bg-[#111114] px-4 py-10 sm:px-6 lg:px-10 xl:px-20">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {TRUST_ITEMS.map((item) => (
@@ -660,110 +774,6 @@ export default function Home() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
-        <div className="mx-auto w-full max-w-[1440px] rounded-2xl border border-[#1E1E22] bg-[#121216] p-6 sm:p-8">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">Отзывы покупателей</h3>
-              <p className="mt-1 text-sm text-[#A0A0A5]">Отзывы с Avito и Яндекс Карт</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <a
-                href={AVITO_REVIEWS_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center rounded-md border border-[#2A2A2E] px-3 py-2 text-xs font-medium text-[#A0A0A5] hover:text-[#FAFAF9]"
-              >
-                Avito
-              </a>
-              <a
-                href={YANDEX_REVIEWS_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center rounded-md border border-[#2A2A2E] px-3 py-2 text-xs font-medium text-[#A0A0A5] hover:text-[#FAFAF9]"
-              >
-                Яндекс Карты
-              </a>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {activeReviews.map((review, idx) => {
-              const isExpanded = Boolean(expandedReviewMap[idx]);
-              const reviewText = String(review.text || '');
-              const author = review.name || review.author || 'Покупатель';
-              const isLong = reviewText.length > 100;
-              const visibleText = isExpanded || !isLong ? reviewText : `${reviewText.slice(0, 100)}...`;
-              return (
-                <article key={`${author}-${idx}`} className="rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="h-12 w-12 overflow-hidden rounded-full border border-[#2A2A2E] bg-[#17171B]">
-                      {review.avatarUrl ? (
-                        <img src={review.avatarUrl} alt={author} loading="lazy" className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-[#FAFAF9]">
-                          {String(author).slice(0, 1).toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-[#FAFAF9]">{author}</p>
-                      <div className="mt-1 flex items-center gap-1 text-[#FBBF24]">
-                        {Array.from({ length: 5 }).map((_, starIdx) => (
-                          <Star key={starIdx} className={`h-3.5 w-3.5 ${starIdx < Number(review.rating || 0) ? 'fill-current' : 'text-[#3A3A3F]'}`} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-xs font-medium uppercase tracking-[0.12em] text-[#6B6B70]">{review.product}</p>
-                  <p className="mt-3 text-sm leading-6 text-[#D0D0D4]">“{visibleText}”</p>
-                  {isLong ? (
-                    <button
-                      type="button"
-                      onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [idx]: !prev[idx] }))}
-                      className="mt-2 text-xs font-medium text-[#54A0C5] hover:text-[#79b7d3]"
-                    >
-                      {isExpanded ? 'Свернуть' : 'Читать полностью'}
-                    </button>
-                  ) : null}
-                  <div className="mt-4">
-                    <a
-                      href={AVITO_REVIEWS_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-xs text-[#A0A0A5] hover:text-[#FAFAF9]"
-                    >
-                      Отзывы на Avito
-                    </a>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <a
-            href={YANDEX_REVIEWS_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 block rounded-xl border border-[#1E1E22] bg-[#0D0D0F] p-5 hover:border-[#2F6177]"
-          >
-            <p className="text-xs uppercase tracking-[0.15em] text-[#54A0C5]">Яндекс Карты</p>
-            <div className="mt-3 flex items-center gap-3">
-              <span className="text-3xl font-bold text-[#FAFAF9]">{YANDEX_RATING}</span>
-              <div className="flex items-center gap-1 text-[#FBBF24]">
-                {Array.from({ length: 5 }).map((_, idx) => (
-                  <Star key={`yandex-star-${idx}`} className="h-4 w-4 fill-current" />
-                ))}
-              </div>
-              <span className="text-sm text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
-            </div>
-            <p className="mt-2 text-sm leading-6 text-[#A0A0A5]">
-              Смотрите полный список отзывов и оценок на Яндекс Картах.
-            </p>
-          </a>
         </div>
       </section>
     </div>
