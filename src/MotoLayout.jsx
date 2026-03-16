@@ -81,8 +81,8 @@ export default function MotoLayout({ children }) {
       if (clearTimerRef.current) clearTimeout(clearTimerRef.current);
       hideTimerRef.current = setTimeout(() => {
         setCartNotice((prev) => (prev ? { ...prev, show: false } : prev));
-      }, 1600);
-      clearTimerRef.current = setTimeout(() => setCartNotice(null), 1950);
+      }, 4500);
+      clearTimerRef.current = setTimeout(() => setCartNotice(null), 4900);
     };
 
     window.addEventListener('mototom:cart:add', onCartAdd);
@@ -191,11 +191,30 @@ export default function MotoLayout({ children }) {
               <Check className="relative h-4 w-4 text-[#32D583]" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-medium text-[#FAFAF9]">Товар добавлен в корзину</p>
+              <p className="text-[14px] font-medium text-[#FAFAF9]">????? ???????? ? ???????</p>
               <p className="mt-1 truncate text-[12px] font-normal text-[#A0A0A5]">
-                {cartNotice.productName} · {cartNotice.quantity} шт.
+                {cartNotice.productName} ? {cartNotice.quantity} ??.
               </p>
             </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setCartNotice(null);
+                setCartOpen(true);
+              }}
+              className={`${PRIMARY_BUTTON_CLASS} h-10 flex-1 px-4 py-0 text-[13px]`}
+            >
+              ??????? ? ???????
+            </button>
+            <button
+              type="button"
+              onClick={() => setCartNotice(null)}
+              className={`${SECONDARY_BUTTON_CLASS} h-10 px-4 py-0 text-[13px]`}
+            >
+              ???????
+            </button>
           </div>
         </div>
       ) : null}

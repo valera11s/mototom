@@ -117,6 +117,7 @@ const TELEGRAM_PREVIEW_IMAGE = 'https://images.unsplash.com/photo-1558981806-ec5
 const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
 const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
 const REVIEW_PAGE_SIZE = 10;
+const REVIEW_PREVIEW_LENGTH = 100;
 
 const TRUST_ITEMS = [
   { title: 'Бесплатная доставка', subtitle: 'При заказе от 10 000 ₽', Icon: Truck },
@@ -214,6 +215,12 @@ function mapProductCard(item) {
     priceText: `${formatPrice(item.price || 0)} ₽`,
     ratingText: `${Number(item.rating || 4.8).toFixed(1)} (${item.reviews_count || 20} отз.)`,
   };
+}
+
+function getCollapsedReviewText(text, maxLength = REVIEW_PREVIEW_LENGTH) {
+  const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+  if (normalized.length <= maxLength) return normalized;
+  return `${normalized.slice(0, maxLength).trimEnd()}...`;
 }
 
 function SectionHeader({ title, actionLabel, actionHref, className = '' }) {
@@ -544,8 +551,11 @@ function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIn
   );
 }
 
-function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext }) {
+function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext, expanded, onToggleExpand }) {
   const reviewProgress = totalReviews > 0 ? Math.max(8, ((reviewIndex + 1) / totalReviews) * 100) : 8;
+  const fullText = String(review?.text || '').replace(/\s+/g, ' ').trim();
+  const canExpand = fullText.length > REVIEW_PREVIEW_LENGTH;
+  const visibleText = expanded ? fullText : getCollapsedReviewText(fullText);
   return (
     <section className="bg-[#0D0D0F] px-6 py-14 text-[#FAFAF9] md:px-10 xl:px-20">
       <div className="mx-auto max-w-[1440px]">
@@ -568,7 +578,7 @@ function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, can
             </div>
           </div>
           <div>
-            <article className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-6">
+            <article className="min-h-[332px] rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-6">
               <div className="flex items-start gap-4">
                 <img src={review.avatarUrl} alt={review.name} className="h-14 w-14 rounded-full object-cover" />
                 <div className="min-w-0 flex-1">
@@ -577,7 +587,18 @@ function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, can
                     {Array.from({ length: review.rating || 5 }).map((_, idx) => <Star key={idx} className="h-4 w-4 fill-current" />)}
                   </div>
                   <p className="mt-4 text-[20px] font-semibold tracking-[-0.03em] text-[#FAFAF9]">{review.product}</p>
-                  <p className="mt-5 max-w-[720px] text-[16px] leading-8 text-[#A0A0A5]">{review.text}</p>
+                  <div className="mt-5 min-h-[132px] max-w-[720px]">
+                    <p className="text-[16px] leading-8 text-[#A0A0A5]">{visibleText}</p>
+                    {canExpand ? (
+                      <button
+                        type="button"
+                        onClick={onToggleExpand}
+                        className="mt-3 text-sm font-medium text-[#54A0C5] transition-colors hover:text-[#7DC4E3]"
+                      >
+                        {expanded ? 'Свернуть отзыв' : 'Развернуть отзыв'}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               </div>
               <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#26262A] pt-5">
@@ -618,8 +639,11 @@ function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, can
   );
 }
 
-function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext }) {
+function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext, expanded, onToggleExpand }) {
   const reviewProgress = totalReviews > 0 ? Math.max(10, ((reviewIndex + 1) / totalReviews) * 100) : 10;
+  const fullText = String(review?.text || '').replace(/\s+/g, ' ').trim();
+  const canExpand = fullText.length > REVIEW_PREVIEW_LENGTH;
+  const visibleText = expanded ? fullText : getCollapsedReviewText(fullText);
   return (
     <section className="space-y-4 px-4 py-8 md:hidden">
       <div className="grid grid-cols-2 gap-2">
@@ -638,7 +662,7 @@ function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canG
           </div>
         </a>
       </div>
-      <article className="min-w-0 overflow-hidden rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
+      <article className="min-h-[286px] min-w-0 overflow-hidden rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
         <div className="flex items-start gap-3">
           <img src={review.avatarUrl} alt={review.name} className="h-12 w-12 rounded-full object-cover" />
           <div className="min-w-0 flex-1">
@@ -650,7 +674,18 @@ function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canG
               <div className="flex gap-1 text-[#FFB800]">{Array.from({ length: review.rating || 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
             </div>
             <p className="mt-3 break-words text-sm font-medium text-[#FAFAF9]">{review.product}</p>
-            <p className="mt-3 break-words text-sm leading-6 text-[#A0A0A5]">{review.text}</p>
+            <div className="mt-3 min-h-[96px]">
+              <p className="break-words text-sm leading-6 text-[#A0A0A5]">{visibleText}</p>
+              {canExpand ? (
+                <button
+                  type="button"
+                  onClick={onToggleExpand}
+                  className="mt-2 text-sm font-medium text-[#54A0C5] transition-colors hover:text-[#7DC4E3]"
+                >
+                  {expanded ? 'Свернуть отзыв' : 'Развернуть отзыв'}
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
         <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex text-sm font-medium text-[#FAFAF9] underline underline-offset-4">Смотреть все отзывы</a>
@@ -755,6 +790,7 @@ export default function Home() {
   const [jacketIndex, setJacketIndex] = useState(0);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [loadedReviewCount, setLoadedReviewCount] = useState(REVIEW_PAGE_SIZE);
+  const [expandedReview, setExpandedReview] = useState(false);
 
   const marqueePromos = useMemo(() => {
     const raw = settings?.home_marquee_promos || settings?.homeMarqueePromos || settings?.marquee_promos;
@@ -808,6 +844,10 @@ export default function Home() {
     setLoadedReviewCount(REVIEW_PAGE_SIZE);
     setReviewIndex(0);
   }, []);
+
+  useEffect(() => {
+    setExpandedReview(false);
+  }, [reviewIndex]);
 
   const review = visibleReviews[reviewIndex] || avitoReviews[0] || {
     name: 'Покупатель',
@@ -950,6 +990,8 @@ export default function Home() {
           onNext={handleNextReview}
           canGoPrev={canGoPrevReview}
           canGoNext={canGoNextReview}
+          expanded={expandedReview}
+          onToggleExpand={() => setExpandedReview((current) => !current)}
         />
       </div>
       <MobileReviews
@@ -960,6 +1002,8 @@ export default function Home() {
         onNext={handleNextReview}
         canGoPrev={canGoPrevReview}
         canGoNext={canGoNextReview}
+        expanded={expandedReview}
+        onToggleExpand={() => setExpandedReview((current) => !current)}
       />
 
       <TelegramSection />
