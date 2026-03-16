@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -116,6 +116,7 @@ const TELEGRAM_CHANNEL_URL = 'https://t.me/+kpx4Cn3SqUNkODIy';
 const TELEGRAM_PREVIEW_IMAGE = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200';
 const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
 const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
+const REVIEW_PAGE_SIZE = 10;
 
 const TRUST_ITEMS = [
   { title: 'Бесплатная доставка', subtitle: 'При заказе от 10 000 ₽', Icon: Truck },
@@ -543,7 +544,8 @@ function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIn
   );
 }
 
-function DesktopReviews({ review }) {
+function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext }) {
+  const reviewProgress = totalReviews > 0 ? Math.max(8, ((reviewIndex + 1) / totalReviews) * 100) : 8;
   return (
     <section className="bg-[#0D0D0F] px-6 py-14 text-[#FAFAF9] md:px-10 xl:px-20">
       <div className="mx-auto max-w-[1440px]">
@@ -551,7 +553,7 @@ function DesktopReviews({ review }) {
         <div className="mt-12 grid grid-cols-[260px_1fr] gap-6">
           <div className="space-y-4">
             <div className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-5 text-center">
-              <p className="text-[28px] font-bold tracking-[-0.03em] text-[#FAFAF9]">5 из 5</p>
+              <p className="text-[28px] font-bold tracking-[-0.03em] text-[#FAFAF9]">5 ?? 5</p>
               <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
                 {Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-5 w-5 fill-current" />)}
               </div>
@@ -587,10 +589,26 @@ function DesktopReviews({ review }) {
               </div>
             </article>
             <div className="mt-4 flex items-center gap-4">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">‹</div>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">›</div>
+              <button
+                type="button"
+                onClick={onPrev}
+                disabled={!canGoPrev}
+                aria-label="Предыдущий отзыв"
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9] ${!canGoPrev ? 'cursor-not-allowed opacity-40' : ''}`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={onNext}
+                disabled={!canGoNext}
+                aria-label="Следующий отзыв"
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9] ${!canGoNext ? 'cursor-not-allowed opacity-40' : ''}`}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
               <div className="h-[3px] flex-1 rounded-full bg-[#2A2A2E]">
-                <div className="h-full w-[18%] rounded-full bg-[#54A0C5]" />
+                <div className="h-full rounded-full bg-[#54A0C5]" style={{ width: `${reviewProgress}%` }} />
               </div>
             </div>
           </div>
@@ -600,7 +618,8 @@ function DesktopReviews({ review }) {
   );
 }
 
-function MobileReviews({ review }) {
+function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canGoPrev, canGoNext }) {
+  const reviewProgress = totalReviews > 0 ? Math.max(10, ((reviewIndex + 1) / totalReviews) * 100) : 10;
   return (
     <section className="space-y-4 px-4 py-8 md:hidden">
       <div className="grid grid-cols-2 gap-2">
@@ -637,14 +656,26 @@ function MobileReviews({ review }) {
         <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex text-sm font-medium text-[#FAFAF9] underline underline-offset-4">Смотреть все отзывы</a>
       </article>
       <div className="flex items-center gap-4">
-        <button type="button" aria-label="Предыдущий отзыв" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">
+        <button
+          type="button"
+          onClick={onPrev}
+          disabled={!canGoPrev}
+          aria-label="Предыдущий отзыв"
+          className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9] ${!canGoPrev ? 'cursor-not-allowed opacity-40' : ''}`}
+        >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <button type="button" aria-label="Следующий отзыв" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">
+        <button
+          type="button"
+          onClick={onNext}
+          disabled={!canGoNext}
+          aria-label="Следующий отзыв"
+          className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9] ${!canGoNext ? 'cursor-not-allowed opacity-40' : ''}`}
+        >
           <ChevronRight className="h-4 w-4" />
         </button>
         <div className="h-[3px] flex-1 rounded-full bg-[#2A2A2E]">
-          <div className="h-full w-[42%] rounded-full bg-[#FFB800]" />
+          <div className="h-full rounded-full bg-[#FFB800]" style={{ width: `${reviewProgress}%` }} />
         </div>
       </div>
     </section>
@@ -722,6 +753,8 @@ export default function Home() {
   const [readyLookIndex, setReadyLookIndex] = useState(0);
   const [helmetIndex, setHelmetIndex] = useState(0);
   const [jacketIndex, setJacketIndex] = useState(0);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [loadedReviewCount, setLoadedReviewCount] = useState(REVIEW_PAGE_SIZE);
 
   const marqueePromos = useMemo(() => {
     const raw = settings?.home_marquee_promos || settings?.homeMarqueePromos || settings?.marquee_promos;
@@ -765,7 +798,18 @@ export default function Home() {
     };
   }, [products, featuredHelmets, featuredJackets]);
 
-  const review = avitoReviews[0] || {
+  const totalReviews = avitoReviews.length;
+  const visibleReviews = useMemo(
+    () => avitoReviews.slice(0, Math.min(loadedReviewCount, totalReviews)),
+    [loadedReviewCount, totalReviews]
+  );
+
+  useEffect(() => {
+    setLoadedReviewCount(REVIEW_PAGE_SIZE);
+    setReviewIndex(0);
+  }, []);
+
+  const review = visibleReviews[reviewIndex] || avitoReviews[0] || {
     name: 'Покупатель',
     rating: 5,
     product: 'Отзыв о магазине',
@@ -776,6 +820,22 @@ export default function Home() {
 
   const currentLook = readyLooks[readyLookIndex] || readyLooks[0] || READY_LOOKS_FALLBACK[0];
   const currentHero = HERO_SLIDES[heroIndex];
+  const canGoPrevReview = reviewIndex > 0;
+  const canGoNextReview = reviewIndex < totalReviews - 1;
+
+  const handleNextReview = () => {
+    if (!canGoNextReview) return;
+    const nextIndex = reviewIndex + 1;
+    if (nextIndex >= loadedReviewCount - 1 && loadedReviewCount < totalReviews) {
+      setLoadedReviewCount((current) => Math.min(current + REVIEW_PAGE_SIZE, totalReviews));
+    }
+    setReviewIndex(nextIndex);
+  };
+
+  const handlePrevReview = () => {
+    if (!canGoPrevReview) return;
+    setReviewIndex((current) => Math.max(0, current - 1));
+  };
 
   return (
     <>
@@ -882,9 +942,25 @@ export default function Home() {
       />
 
       <div className="hidden md:block">
-        <DesktopReviews review={review} />
+        <DesktopReviews
+          review={review}
+          reviewIndex={reviewIndex}
+          totalReviews={totalReviews}
+          onPrev={handlePrevReview}
+          onNext={handleNextReview}
+          canGoPrev={canGoPrevReview}
+          canGoNext={canGoNextReview}
+        />
       </div>
-      <MobileReviews review={review} />
+      <MobileReviews
+        review={review}
+        reviewIndex={reviewIndex}
+        totalReviews={totalReviews}
+        onPrev={handlePrevReview}
+        onNext={handleNextReview}
+        canGoPrev={canGoPrevReview}
+        canGoNext={canGoNextReview}
+      />
 
       <TelegramSection />
       <TrustBar />
