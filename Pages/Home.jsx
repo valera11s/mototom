@@ -1,54 +1,70 @@
-п»їimport React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, ShoppingBag, Truck, ShieldCheck, RotateCcw, Headphones, ArrowRight, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import {
+  ArrowRight,
+  Send,
+  ShoppingBag,
+  Star,
+  Truck,
+  ShieldCheck,
+  RotateCcw,
+  Headphones,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { useMotoStore } from '../src/data/motoStore.jsx';
-import { createPageUrl, createProductUrl } from '../src/utils.js';
+import { createPageUrl, createProductUrl, formatPrice } from '../src/utils.js';
 import Seo from '../src/components/Seo.jsx';
 import avitoReviews from '../src/data/avitoReviews.json';
+import {
+  DEFAULT_MARQUEE_PROMOS,
+  HOME_CATEGORY_META,
+  PRIMARY_BUTTON_CLASS,
+  SECONDARY_BUTTON_CLASS,
+  PRODUCT_BADGE_CLASS,
+  parseMarqueePromos,
+} from '../src/data/siteTheme.js';
 
 const HERO_SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1761903311461-854de9793ed6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440',
-    tag: 'РќРћР’РђРЇ РљРћР›Р›Р•РљР¦РРЇ 2026',
-    title: 'Р­РєРёРїРёСЂРѕРІРєР°\nРІС‹СЃС€РµРіРѕ РєР»Р°СЃСЃР°',
-    subtitle: 'РџСЂРµРјРёР°Р»СЊРЅС‹Рµ С€Р»РµРјС‹, РєСѓСЂС‚РєРё Рё Р·Р°С‰РёС‚Р° РґР»СЏ СЂР°Р№РґРµСЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ С†РµРЅСЏС‚ РєР°С‡РµСЃС‚РІРѕ, Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ Рё СЃС‚РёР»СЊ.',
+    image: 'https://images.unsplash.com/photo-1761903311461-854de9793ed6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
+    tag: 'НОВАЯ КОЛЛЕКЦИЯ 2026',
+    title: 'Экипировка\nдля тех, кто едет дальше',
+    subtitle:
+      'Премиальные шлемы, мотокуртки и защита для райдеров, которые выбирают не компромисс, а правильную экипировку.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440',
-    tag: 'Р“РћР РћР”РЎРљРћР™ РЎР•Р—РћРќ',
-    title: 'РњР°РєСЃРёРјСѓРј\nР·Р°С‰РёС‚С‹ РІ РіРѕСЂРѕРґРµ',
-    subtitle: 'РЎРѕРІСЂРµРјРµРЅРЅС‹Рµ РјР°С‚РµСЂРёР°Р»С‹, РїСЂРѕРґСѓРјР°РЅРЅР°СЏ РІРµРЅС‚РёР»СЏС†РёСЏ Рё РЅР°РґРµР¶РЅР°СЏ РїРѕСЃР°РґРєР° РґР»СЏ РµР¶РµРґРЅРµРІРЅС‹С… РјР°СЂС€СЂСѓС‚РѕРІ.',
+    image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
+    tag: 'ГОРОДСКОЙ СЕЗОН',
+    title: 'Городской комплект\nбез лишнего шума',
+    subtitle:
+      'Точные посадки, понятные материалы и спокойный premium-визуал для ежедневных маршрутов.',
   },
   {
-    image: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440',
-    tag: 'Р”РђР›Р¬РќРР• РњРђР РЁР РЈРўР«',
-    title: 'РљРѕРјС„РѕСЂС‚\nРЅР° Р»СЋР±РѕР№ РґРёСЃС‚Р°РЅС†РёРё',
-    subtitle: 'Р“РѕС‚РѕРІС‹Рµ СЂРµС€РµРЅРёСЏ РґР»СЏ РїРѕРµР·РґРѕРє РЅР° РґР°Р»СЊРЅРёРµ СЂР°СЃСЃС‚РѕСЏРЅРёСЏ Р±РµР· РєРѕРјРїСЂРѕРјРёСЃСЃРѕРІ РїРѕ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё.',
+    image: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
+    tag: 'ДАЛЬНИЕ ПОЕЗДКИ',
+    title: 'Комфорт и контроль\nна любой дистанции',
+    subtitle:
+      'Шлемы, куртки и аксессуары для длинных поездок, когда важна каждая деталь комплекта.',
   },
 ];
 
-const READY_LOOKS = [
+const READY_LOOKS_FALLBACK = [
   {
     slug: 'dark-rider',
     name: 'Dark Rider',
     slides: [
       {
-        description: 'РџРѕР»РЅР°СЏ Р·Р°С‰РёС‚Р° РІ С‚С‘РјРЅРѕРј СЃС‚РёР»Рµ',
-        priceText: 'РѕС‚ 24 990 в‚Ѕ',
-        countText: '4 С‚РѕРІР°СЂР°',
+        description: 'Полная защита в тёмном стиле',
+        priceText: 'от 24 990 ?',
+        countText: '4 товара',
         image: 'https://images.unsplash.com/photo-1569931327952-8cbcd1734ca8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
       {
-        description: 'РњР°РєСЃРёРјСѓРј РєРѕРЅС‚СЂРѕР»СЏ РІ РіРѕСЂРѕРґРµ',
-        priceText: 'РѕС‚ 26 490 в‚Ѕ',
-        countText: '5 С‚РѕРІР°СЂРѕРІ',
+        description: 'Максимум контроля в городе',
+        priceText: 'от 26 490 ?',
+        countText: '5 товаров',
         image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      },
-      {
-        description: 'РЎРµС‚ РґР»СЏ РµР¶РµРґРЅРµРІРЅС‹С… РїРѕРµР·РґРѕРє',
-        priceText: 'РѕС‚ 23 990 в‚Ѕ',
-        countText: '3 С‚РѕРІР°СЂР°',
-        image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
   },
@@ -57,15 +73,15 @@ const READY_LOOKS = [
     name: 'Urban Warrior',
     slides: [
       {
-        description: 'Р“РѕСЂРѕРґСЃРєРѕР№ СЃС‚РёР»СЊ СЃ РјР°РєСЃРёРјР°Р»СЊРЅРѕР№ Р·Р°С‰РёС‚РѕР№',
-        priceText: 'РѕС‚ 19 990 в‚Ѕ',
-        countText: '3 С‚РѕРІР°СЂР°',
+        description: 'Городской сет с мягкой защитой',
+        priceText: 'от 19 990 ?',
+        countText: '3 товара',
         image: 'https://images.unsplash.com/photo-1720211466012-dba5663d612d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
       {
-        description: 'Р›С‘РіРєРёР№ РєРѕРјРїР»РµРєС‚ РЅР° РєР°Р¶РґС‹Р№ РґРµРЅСЊ',
-        priceText: 'РѕС‚ 21 490 в‚Ѕ',
-        countText: '4 С‚РѕРІР°СЂР°',
+        description: 'Лёгкий комплект на каждый день',
+        priceText: 'от 21 490 ?',
+        countText: '4 товара',
         image: 'https://images.unsplash.com/photo-1694676043796-7ae250a81f3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
@@ -75,22 +91,10 @@ const READY_LOOKS = [
     name: 'Night Cruiser',
     slides: [
       {
-        description: 'Р”Р»СЏ РІРµС‡РµСЂРЅРёС… РїРѕРµР·РґРѕРє РїРѕ РіРѕСЂРѕРґСѓ',
-        priceText: 'РѕС‚ 32 490 в‚Ѕ',
-        countText: '5 С‚РѕРІР°СЂРѕРІ',
+        description: 'Для быстрых вечерних выездов',
+        priceText: 'от 32 490 ?',
+        countText: '5 товаров',
         image: 'https://images.unsplash.com/photo-1762769665979-52caeade14a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      },
-      {
-        description: 'РљРѕРјС„РѕСЂС‚ Рё Р·Р°РјРµС‚РЅРѕСЃС‚СЊ РЅРѕС‡СЊСЋ',
-        priceText: 'РѕС‚ 31 290 в‚Ѕ',
-        countText: '4 С‚РѕРІР°СЂР°',
-        image: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      },
-      {
-        description: 'Р”Р»СЏ Р±С‹СЃС‚СЂС‹С… РіРѕСЂРѕРґСЃРєРёС… РІС‹РµР·РґРѕРІ',
-        priceText: 'РѕС‚ 29 990 в‚Ѕ',
-        countText: '3 С‚РѕРІР°СЂР°',
-        image: 'https://images.unsplash.com/photo-1591217554009-7aedf8ec3244?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
   },
@@ -99,120 +103,147 @@ const READY_LOOKS = [
     name: 'Road King',
     slides: [
       {
-        description: 'РљР»Р°СЃСЃРёС‡РµСЃРєРёР№ РѕР±СЂР°Р· РґР»СЏ РґР°Р»СЊРЅРёС… РїРѕРµР·РґРѕРє',
-        priceText: 'РѕС‚ 28 990 в‚Ѕ',
-        countText: '4 С‚РѕРІР°СЂР°',
+        description: 'Туринговый комплект без компромиссов',
+        priceText: 'от 28 990 ?',
+        countText: '4 товара',
         image: 'https://images.unsplash.com/photo-1758615590275-9a46daafc4f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-      },
-      {
-        description: 'РўСѓСЂРёРЅРіРѕРІС‹Р№ РЅР°Р±РѕСЂ РїРѕРІС‹С€РµРЅРЅРѕРіРѕ РєРѕРјС„РѕСЂС‚Р°',
-        priceText: 'РѕС‚ 33 490 в‚Ѕ',
-        countText: '5 С‚РѕРІР°СЂРѕРІ',
-        image: 'https://images.unsplash.com/photo-1665009490901-ca1f40408047?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
   },
 ];
 
-const HOME_CATEGORIES = [
-  { name: 'РЁР»РµРјС‹', image: 'https://images.unsplash.com/photo-1645021081534-93ce573e3dce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { name: 'РљСѓСЂС‚РєРё', image: 'https://images.unsplash.com/photo-1694852860772-ec8598c72c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { name: 'РџРµСЂС‡Р°С‚РєРё', image: 'https://images.unsplash.com/photo-1662707645694-36d3e81afd85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { name: 'Р‘РѕС‚РёРЅРєРё', image: 'https://images.unsplash.com/photo-1693679117329-da630cfbf90c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { name: 'Р—Р°С‰РёС‚Р°', image: 'https://images.unsplash.com/photo-1644435234001-ceb5f78330f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { name: 'РђРєСЃРµСЃСЃСѓР°СЂС‹', image: 'https://images.unsplash.com/photo-1719212752790-fb82dd11de88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-];
-
-const FEATURED_PRODUCTS = [
-  {
-    productId: 'helmet-shoei-rf1400-matte',
-    name: 'Shoei RF-1400 РњР°С‚РѕРІС‹Р№',
-    rating: '4.9 (128 РѕС‚Р·.)',
-    priceText: '54 900 в‚Ѕ',
-    image: 'https://images.unsplash.com/photo-1591216117012-82597d240978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    badge: 'РҐРРў РџР РћР”РђР–',
-    badgeClass: 'bg-[#54A0C5] text-[#FAFAF9]',
-  },
-  {
-    productId: 'jacket-revit-eclipse',
-    name: "Rev'It Eclipse 2 РљСѓСЂС‚РєР°",
-    rating: '4.7 (94 РѕС‚Р·.)',
-    priceText: '38 900 в‚Ѕ',
-    image: 'https://images.unsplash.com/photo-1694676043796-7ae250a81f3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-  },
-  {
-    productId: 'gloves-sp8-black',
-    name: 'Alpinestars SP-8 РџРµСЂС‡Р°С‚РєРё',
-    rating: '4.8 (67 РѕС‚Р·.)',
-    priceText: '12 900 в‚Ѕ',
-    image: 'https://images.unsplash.com/photo-1569932353341-b518d82f8a54?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    badge: 'РќРћР’РРќРљРђ',
-    badgeClass: 'bg-[#2A2A2E] text-[#FAFAF9]',
-  },
-  {
-    productId: 'boots-tcx-street',
-    name: 'TCX Street 3 Р‘РѕС‚РёРЅРєРё',
-    rating: '4.6 (52 РѕС‚Р·.)',
-    priceText: '21 900 в‚Ѕ',
-    image: 'https://images.unsplash.com/photo-1591217554009-7aedf8ec3244?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-  },
-];
-
-const TRUST_ITEMS = [
-  { title: 'Р‘РµСЃРїР»Р°С‚РЅР°СЏ РґРѕСЃС‚Р°РІРєР°', subtitle: 'РџСЂРё Р·Р°РєР°Р·Рµ РѕС‚ 10 000 в‚Ѕ', Icon: Truck },
-  { title: 'РЎРµСЂС‚РёС„РёРєР°С†РёСЏ', subtitle: 'ECE Рё DOT СЃС‚Р°РЅРґР°СЂС‚С‹', Icon: ShieldCheck },
-  { title: 'РџСЂРѕСЃС‚РѕР№ РІРѕР·РІСЂР°С‚', subtitle: '30 РґРЅРµР№ РЅР° РІРѕР·РІСЂР°С‚', Icon: RotateCcw },
-  { title: 'РџРѕРґРґРµСЂР¶РєР°', subtitle: 'Р Р°Р№РґРµСЂС‹ РїРѕРјРѕРіР°СЋС‚ СЂР°Р№РґРµСЂР°Рј', Icon: Headphones },
-];
 const TELEGRAM_CHANNEL_URL = 'https://t.me/+kpx4Cn3SqUNkODIy';
+const TELEGRAM_PREVIEW_IMAGE = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200';
 const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
-const AVITO_RATING = '5 РёР· 5';
-const AVITO_RATING_COUNT = 'РќР° РѕСЃРЅРѕРІРµ 175 РѕС†РµРЅРѕРє';
+const AVITO_RATING = '5 из 5';
+const AVITO_RATING_COUNT = 'На основе 175 оценок';
 const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
 const YANDEX_RATING = '5.0';
-const YANDEX_REVIEWS_COUNT = '500+ РѕС‚Р·С‹РІРѕРІ';
-const TELEGRAM_PREVIEW_IMAGE = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200';
-const MARQUEE_BRANDS = ['Shoei', 'Alpinestars', 'Dainese', 'AGV', 'REVIT', 'BELL', 'ARAI', 'ICON', 'SENA', 'SHARK', 'SCHUBERTH', 'HJC'];
-const READY_LOOKS_DOMINO_INTERVAL_MS = 1800;
+const YANDEX_REVIEWS_COUNT = '500+ отзывов';
+const TRUST_ITEMS = [
+  { title: 'Бесплатная доставка', subtitle: 'При заказе от 10 000 ?', Icon: Truck },
+  { title: 'Сертификация', subtitle: 'ECE и DOT стандарты', Icon: ShieldCheck },
+  { title: 'Простой возврат', subtitle: '30 дней на возврат', Icon: RotateCcw },
+  { title: 'Поддержка', subtitle: 'Райдеры помогают райдерам', Icon: Headphones },
+];
 
 const revealStyles = `
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(28px) scale(0.985);
-  transition: opacity .55s ease, transform .55s ease;
-  will-change: transform, opacity;
-}
-.reveal-on-scroll.revealed {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.reveal-card {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity .45s ease, transform .45s ease;
-}
-.reveal-card.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
+.reveal-on-scroll { opacity: 0; transform: translateY(28px); transition: opacity .55s ease, transform .55s ease; }
+.reveal-on-scroll.revealed { opacity: 1; transform: translateY(0); }
+@keyframes mototom-marquee-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee-track { animation: mototom-marquee-left 24s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll,
-  .reveal-card {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  .reveal-on-scroll { opacity: 1; transform: none; transition: none; }
+  .marquee-track { animation: none; }
 }
 `;
 
-function ReadyLookCard({ look, current, onSelectSlide }) {
-  const slides = look.slides;
+function normalizeCategoryName(name) {
+  const value = String(name || '').trim().toLowerCase();
+  if (value.includes('шлем')) return 'helmets';
+  if (value.includes('куртк') || value.includes('моторубаш')) return 'jackets';
+  if (value.includes('перчат')) return 'gloves';
+  if (value.includes('ботин')) return 'boots';
+  if (value.includes('защит')) return 'protection';
+  if (value.includes('аксесс')) return 'accessories';
+  return value;
+}
 
-  const slide = slides[current];
+function getConditionMeta(condition) {
+  const isUsed = String(condition || 'new').toLowerCase() === 'used';
+  return {
+    label: isUsed ? 'Б/У' : 'Новый',
+    className: isUsed ? PRODUCT_BADGE_CLASS.used : PRODUCT_BADGE_CLASS.new,
+  };
+}
+
+function ProductCard({ item, navigate, addToCart, getCartQuantity, getMaxAllowedQty, badgeText }) {
+  const condition = getConditionMeta(item.condition);
+  const cartQty = getCartQuantity(item.productId, null);
+  const maxAllowed = getMaxAllowedQty(item.productId);
+  const canAdd = maxAllowed > cartQty;
 
   return (
-    <Link to={`${createPageUrl('ReadySet')}/${look.slug}`} className="overflow-hidden rounded-lg">
-      <div className="relative h-64 w-full overflow-hidden rounded-lg sm:h-72 lg:h-80">
+    <article
+      onClick={() => navigate(createProductUrl({ id: item.productId, slug: item.slug, name: item.name }))}
+      className="group flex h-full cursor-pointer snap-start flex-col overflow-hidden rounded-[22px] border border-[#1E1E22] bg-[#16161A]"
+    >
+      <div className="relative h-[240px] overflow-hidden sm:h-[260px]">
+        <img src={item.image} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+          {badgeText ? <span className="rounded-full bg-[#54A0C5] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#FAFAF9]">{badgeText}</span> : null}
+          <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${condition.className}`}>{condition.label}</span>
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <div>
+          <p className="text-xs uppercase tracking-[0.14em] text-[#54A0C5]">{item.brand || 'MOTOTOM'}</p>
+          <p className="mt-2 min-h-[48px] text-[17px] font-semibold leading-6 text-[#FAFAF9] line-clamp-2">{item.name}</p>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-[#A0A0A5]">
+          <Star className="h-3.5 w-3.5 fill-[#54A0C5] text-[#54A0C5]" />
+          <span>{item.rating}</span>
+        </div>
+        <div className="mt-auto flex items-end justify-between gap-3">
+          <p className="text-[24px] font-bold tracking-[-0.4px] text-[#FAFAF9]">{item.priceText}</p>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(item.productId, 1);
+            }}
+            disabled={!canAdd}
+            className={`${PRIMARY_BUTTON_CLASS} h-11 min-w-[132px] px-4 py-0 text-[13px] ${!canAdd ? 'cursor-not-allowed opacity-55 hover:translate-y-0 hover:shadow-none' : ''}`}
+          >
+            <ShoppingBag className="h-4 w-4" />
+            <span>{canAdd ? 'В корзину' : 'Лимит'}</span>
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+function ProductSection({ title, href, buttonLabel, items, navigate, addToCart, getCartQuantity, getMaxAllowedQty }) {
+  return (
+    <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Подборка</p>
+            <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">{title}</h3>
+          </div>
+          <Link to={href} className={PRIMARY_BUTTON_CLASS}>
+            <span>{buttonLabel}</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="-mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 xl:grid-cols-4">
+          {items.map((item, idx) => (
+            <div key={`${title}-${item.productId}-${idx}`} className="w-[86vw] shrink-0 sm:w-auto">
+              <ProductCard
+                item={item}
+                badgeText={idx === 0 ? 'Хит продаж' : ''}
+                navigate={navigate}
+                addToCart={addToCart}
+                getCartQuantity={getCartQuantity}
+                getMaxAllowedQty={getMaxAllowedQty}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ReadyLookCard({ look, current, onSelectSlide }) {
+  const slides = look.slides;
+  const slide = slides[current] || slides[0];
+
+  return (
+    <Link to={`${createPageUrl('ReadySet')}/${look.slug}`} className="group overflow-hidden rounded-[22px]">
+      <div className="relative h-72 overflow-hidden rounded-[22px] border border-[#1E1E22] bg-[#16161A] sm:h-80">
         {slides.map((item, idx) => (
           <img
             key={`${look.slug}-${idx}`}
@@ -221,6 +252,19 @@ function ReadyLookCard({ look, current, onSelectSlide }) {
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
           />
         ))}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0D0D0FEA] via-[#0D0D0F82] to-transparent p-5">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="text-[20px] font-semibold text-[#FAFAF9]">{look.name}</p>
+              <p className="mt-2 text-sm text-[#D7D7DC]">{slide.description}</p>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-sm font-semibold text-[#54A0C5]">{slide.priceText}</span>
+                <span className="text-xs text-[#A0A0A5]">{slide.countText}</span>
+              </div>
+            </div>
+            <ArrowRight className="h-5 w-5 text-[#FAFAF9] transition-transform duration-200 group-hover:translate-x-1" />
+          </div>
+        </div>
         <div className="absolute bottom-4 left-4 flex items-center gap-1.5">
           {slides.map((_, idx) => (
             <button
@@ -230,17 +274,9 @@ function ReadyLookCard({ look, current, onSelectSlide }) {
                 e.preventDefault();
                 onSelectSlide(idx);
               }}
-              className={`h-1 rounded-[2px] ${idx === current ? 'w-4 bg-[#54A0C5]' : 'w-1 bg-[#6B6B70]'}`}
+              className={`h-1.5 rounded-full ${idx === current ? 'w-8 bg-[#54A0C5]' : 'w-2 bg-[#D0D3DA6B]'}`}
             />
           ))}
-        </div>
-      </div>
-      <div className="flex flex-col gap-1.5 pt-4">
-        <p className="text-base font-semibold text-[#FAFAF9]">{look.name}</p>
-        <p className="text-xs font-normal text-[#A0A0A5]">{slide.description}</p>
-        <div className="mt-0.5 flex items-center gap-2">
-          <p className="text-[13px] font-medium text-[#54A0C5]">{slide.priceText}</p>
-          <p className="text-xs font-normal text-[#6B6B70]">{slide.countText}</p>
         </div>
       </div>
     </Link>
@@ -249,108 +285,20 @@ function ReadyLookCard({ look, current, onSelectSlide }) {
 
 export default function Home() {
   const navigate = useNavigate();
-  const { addToCart, products, categories, sets, getMaxAllowedQty, getCartQuantity } = useMotoStore();
-  const [slide, setSlide] = useState(0);
+  const { addToCart, products, categories, sets, settings, getMaxAllowedQty, getCartQuantity } = useMotoStore();
+  const [heroIndex, setHeroIndex] = useState(0);
   const [readyLookSlides, setReadyLookSlides] = useState([]);
-  const [activeReadyLook, setActiveReadyLook] = useState(0);
-  const [addedPulseByProduct, setAddedPulseByProduct] = useState({});
   const [reviewIndex, setReviewIndex] = useState(0);
   const [expandedReviewMap, setExpandedReviewMap] = useState({});
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5000);
+    const timer = setInterval(() => setHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length), 5000);
     return () => clearInterval(timer);
   }, []);
-
-  const homeCategoriesData = React.useMemo(() => {
-    const topLevel = Array.isArray(categories) ? categories.filter((c) => c.parent_id == null) : [];
-    const byName = new Map(topLevel.map((c) => [String(c.name || '').toLowerCase(), c]));
-
-    return HOME_CATEGORIES.map((base) => {
-      const fromDb = byName.get(String(base.name).toLowerCase());
-      const linked = products.find(
-        (item) =>
-          (fromDb?.id && String(item.categoryId || '') === String(fromDb.id)) ||
-          String(item.category || '').toLowerCase() === String((fromDb?.name || base.name) || '').toLowerCase()
-      );
-
-      return {
-        name: fromDb?.name || base.name,
-        image: fromDb?.image || linked?.image || base.image,
-      };
-    });
-  }, [categories, products]);
-
-  const readyLooksData = React.useMemo(() => {
-    if (!Array.isArray(sets) || sets.length === 0) return READY_LOOKS.slice(0, 4);
-
-    const fromDb = sets
-      .map((setItem, idx) => {
-        const items = (setItem.productIds || [])
-          .map((id) => products.find((product) => product.id === id))
-          .filter(Boolean);
-
-        const slidesFromProducts = items.slice(0, 4).map((product) => ({
-          description: product.name,
-          priceText: `РѕС‚ ${Number(product.price || 0).toLocaleString('ru-RU')} в‚Ѕ`,
-          countText: `${items.length} ${items.length === 1 ? 'С‚РѕРІР°СЂ' : items.length < 5 ? 'С‚РѕРІР°СЂР°' : 'С‚РѕРІР°СЂРѕРІ'}`,
-          image: product.image,
-        }));
-
-        const fallbackImage = setItem.coverImage || HOME_CATEGORIES[idx % HOME_CATEGORIES.length]?.image || HOME_CATEGORIES[0].image;
-        const slides =
-          slidesFromProducts.length > 0
-            ? slidesFromProducts
-            : [
-                {
-                  description: setItem.description || 'Р“РѕС‚РѕРІС‹Р№ РѕР±СЂР°Р·',
-                  priceText: 'РѕС‚ 0 в‚Ѕ',
-                  countText: '0 С‚РѕРІР°СЂРѕРІ',
-                  image: fallbackImage,
-                },
-              ];
-
-        return {
-          slug: setItem.slug || `look-${idx}`,
-          name: setItem.name || `РћР±СЂР°Р· ${idx + 1}`,
-          slides,
-        };
-      })
-      .filter((item) => item.slug && item.name);
-
-    return (fromDb.length > 0 ? fromDb : READY_LOOKS).slice(0, 4);
-  }, [sets, products]);
-
-  useEffect(() => {
-    setReadyLookSlides((prev) => readyLooksData.map((_, idx) => (Number.isInteger(prev[idx]) ? prev[idx] : 0)));
-    setActiveReadyLook((prev) => (readyLooksData.length > 0 ? Math.min(prev, readyLooksData.length - 1) : 0));
-  }, [readyLooksData]);
-
-  const revealTargetsKey = React.useMemo(
-    () =>
-      `${readyLooksData.map((item) => item.slug).join('|')}::${homeCategoriesData
-        .map((item) => item.name)
-        .join('|')}`,
-    [readyLooksData, homeCategoriesData]
-  );
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll('[data-reveal]'));
     if (nodes.length === 0) return undefined;
-
-    const revealIfVisible = (node) => {
-      const rect = node.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      return rect.top <= viewportHeight * 0.95 && rect.bottom >= viewportHeight * 0.05;
-    };
-
-    nodes.forEach((node) => {
-      if (revealIfVisible(node)) {
-        node.classList.add('revealed');
-      }
-    });
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -361,83 +309,92 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.05, rootMargin: '0px 0px -2% 0px' }
+      { threshold: 0.08 }
     );
 
-    nodes.forEach((node) => {
-      if (!node.classList.contains('revealed')) {
-        observer.observe(node);
-      }
-    });
+    nodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
-  }, [revealTargetsKey]);
+  }, [products.length, categories.length, sets.length]);
 
-  useEffect(() => {
-    if (readyLooksData.length === 0) return undefined;
-    const timer = setInterval(() => {
-      setReadyLookSlides((prev) =>
-        prev.map((currentSlide, idx) =>
-          idx === activeReadyLook ? (currentSlide + 1) % readyLooksData[idx].slides.length : currentSlide
-        )
-      );
-      setActiveReadyLook((prev) => (prev + 1) % readyLooksData.length);
-    }, READY_LOOKS_DOMINO_INTERVAL_MS);
+  const topLevelCategories = useMemo(() => {
+    const list = Array.isArray(categories) ? categories.filter((item) => item.parent_id == null) : [];
+    const byKey = new Map(list.map((item) => [normalizeCategoryName(item.name), item]));
 
-    return () => clearInterval(timer);
-  }, [activeReadyLook, readyLooksData]);
-
-  useEffect(() => {
-    if (activeReviews.length === 0) return;
-    setReviewIndex((prev) => (prev >= activeReviews.length ? 0 : prev));
-  }, [activeReviews.length]);
-
-  const visibleFeatured = React.useMemo(() => {
-    const source = Array.isArray(products) ? products : [];
-    const prioritized = source.filter((item) => item.featured || item.popular || item.on_sale);
-    const base = (prioritized.length >= 4 ? prioritized : source).slice(0, 4);
-
-    const mapped = base.map((item, idx) => {
-      const ratingValue = Number(item.rating || 4.6);
-      const productId = item.id || item.product_id || item.slug || `featured-${idx}`;
-      const rawPrice = Number(item.price);
-      const normalizedPrice = Number.isFinite(rawPrice) ? rawPrice : 0;
+    return Object.entries(HOME_CATEGORY_META).map(([key, meta]) => {
+      const fromDb = byKey.get(key);
+      const linkedProduct = products.find((product) => normalizeCategoryName(product.category) === key);
       return {
-        productId,
-        slug: item.slug || null,
-        name: item.name,
-        rating: `${Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : '4.6'} (${item.reviews_count || 30 + idx * 7} РѕС‚Р·.)`,
-        priceText: `${normalizedPrice.toLocaleString('ru-RU')} в‚Ѕ`,
-        image: item.image || item.image_url || 'https://images.unsplash.com/photo-1591216117012-82597d240978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-        badge: item.featured ? 'РҐРРў РџР РћР”РђР–' : item.on_sale ? 'Р’Р«Р“РћР”Рђ' : item.popular ? 'РџРћРџРЈР›РЇР РќРћР•' : '',
-        badgeClass: item.featured ? 'bg-[#54A0C5] text-[#FAFAF9]' : item.on_sale ? 'bg-[#1E1E22] text-[#FAFAF9]' : 'bg-[#2A2A2E] text-[#FAFAF9]',
+        key,
+        name: fromDb?.name || meta.name,
+        description: meta.description,
+        image: fromDb?.image || linkedProduct?.image || meta.image,
+      };
+    });
+  }, [categories, products]);
+
+  const marqueePromos = useMemo(() => {
+    const parsed = parseMarqueePromos(settings?.home_marquee_promos);
+    return parsed.length > 0 ? parsed : DEFAULT_MARQUEE_PROMOS;
+  }, [settings]);
+
+  const readyLooks = useMemo(() => {
+    if (!Array.isArray(sets) || sets.length === 0) return READY_LOOKS_FALLBACK;
+
+    const looks = sets.map((setItem, idx) => {
+      const items = (setItem.productIds || []).map((id) => products.find((product) => String(product.id) === String(id))).filter(Boolean);
+      const slides = items.slice(0, 4).map((product) => ({
+        description: product.name,
+        priceText: `от ${formatPrice(product.price)} ?`,
+        countText: `${items.length} ${items.length === 1 ? 'товар' : items.length < 5 ? 'товара' : 'товаров'}`,
+        image: product.image,
+      }));
+
+      return {
+        slug: setItem.slug || `look-${idx}`,
+        name: setItem.name || `Образ ${idx + 1}`,
+        slides: slides.length > 0 ? slides : [{
+          description: setItem.description || 'Готовый образ',
+          priceText: 'от 0 ?',
+          countText: '0 товаров',
+          image: setItem.coverImage || READY_LOOKS_FALLBACK[idx % READY_LOOKS_FALLBACK.length].slides[0].image,
+        }],
       };
     });
 
-    return mapped.length > 0 ? mapped : FEATURED_PRODUCTS;
-  }, [products]);
+    return looks.slice(0, 4);
+  }, [sets, products]);
 
-  const currentSlide = HERO_SLIDES[slide];
-  const activeReviews = React.useMemo(() => (Array.isArray(avitoReviews) ? avitoReviews.slice(0, 6) : []), []);
+  useEffect(() => {
+    setReadyLookSlides((prev) => readyLooks.map((look, idx) => (Number.isInteger(prev[idx]) ? Math.min(prev[idx], look.slides.length - 1) : 0)));
+  }, [readyLooks]);
+
+  const mapProductCard = (item) => ({
+    productId: item.id,
+    slug: item.slug || null,
+    brand: item.brand || 'MOTOTOM',
+    name: item.name,
+    condition: item.condition || 'new',
+    image: item.image || item.image_url,
+    priceText: `${formatPrice(item.price || 0)} ?`,
+    rating: `${Number(item.rating || 4.8).toFixed(1)} (${item.reviews_count || 20} отз.)`,
+  });
+
+  const helmetProducts = useMemo(() => products.filter((item) => normalizeCategoryName(item.category) === 'helmets').slice(0, 4).map(mapProductCard), [products]);
+  const jacketProducts = useMemo(() => products.filter((item) => normalizeCategoryName(item.category) === 'jackets').slice(0, 4).map(mapProductCard), [products]);
+  const featuredFallback = useMemo(() => products.slice(0, 8).map(mapProductCard), [products]);
+  const popularHelmets = helmetProducts.length > 0 ? helmetProducts : featuredFallback.slice(0, 4);
+  const popularJackets = jacketProducts.length > 0 ? jacketProducts : featuredFallback.slice(4, 8).length > 0 ? featuredFallback.slice(4, 8) : featuredFallback.slice(0, 4);
+
+  const activeReviews = useMemo(() => (Array.isArray(avitoReviews) ? avitoReviews.slice(0, 6) : []), []);
   const activeReview = activeReviews[reviewIndex] || null;
+  const currentSlide = HERO_SLIDES[heroIndex];
 
-  const triggerAddAnimation = (productId) => {
-    setAddedPulseByProduct((prev) => ({ ...prev, [productId]: true }));
-    window.setTimeout(() => {
-      setAddedPulseByProduct((prev) => ({ ...prev, [productId]: false }));
-    }, 850);
-  };
-
-  const homeStructuredData = React.useMemo(() => {
+  const homeStructuredData = useMemo(() => {
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://mototom.ru';
     return {
       '@context': 'https://schema.org',
       '@graph': [
-        {
-          '@type': 'Organization',
-          name: 'MOTOTOM',
-          url: origin,
-          logo: `${origin}/logo.png`,
-        },
+        { '@type': 'Organization', name: 'MOTOTOM', url: origin, logo: `${origin}/logo.png` },
         {
           '@type': 'WebSite',
           name: 'MOTOTOM',
@@ -454,173 +411,191 @@ export default function Home() {
 
   return (
     <div className="bg-[#0D0D0F] text-slate-100">
-      <Seo
-        title="РњРѕС‚РѕСЌРєРёРїРёСЂРѕРІРєР° Рё РіРѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹"
-        description="MOTOTOM: С€Р»РµРјС‹, РєСѓСЂС‚РєРё, РїРµСЂС‡Р°С‚РєРё, Р±РѕС‚РёРЅРєРё Рё РіРѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹. РџРѕРґР±РѕСЂ СЌРєРёРїРёСЂРѕРІРєРё Рё РґРѕСЃС‚Р°РІРєР° РїРѕ Р РѕСЃСЃРёРё."
-        structuredData={homeStructuredData}
-      />
+      <Seo title="Мотоэкипировка и готовые образы" description="MOTOTOM: шлемы, мотокуртки, защита и аксессуары. Подбор экипировки и доставка по России." structuredData={homeStructuredData} />
       <style>{revealStyles}</style>
-      <section className="relative h-[560px] w-full overflow-hidden sm:h-[620px] lg:h-[680px]">
+      <section className="relative h-[640px] overflow-hidden sm:h-[700px] lg:h-[760px]">
         {HERO_SLIDES.map((item, idx) => (
-          <img
-            key={item.image}
-            src={item.image}
-            alt="MotoTom Hero"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === slide ? 'opacity-100' : 'opacity-0'}`}
-          />
+          <img key={item.image} src={item.image} alt="Hero" className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === heroIndex ? 'opacity-100' : 'opacity-0'}`} />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0Fe6] via-[#0D0D0F99] to-[#0D0D0FCC]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,6,8,0.88)_0%,rgba(6,6,8,0.56)_40%,rgba(6,6,8,0.22)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(84,160,197,0.28),transparent_34%)]" />
 
-        <div className="absolute left-4 right-4 top-24 flex max-w-[620px] flex-col gap-5 sm:left-8 sm:right-auto sm:top-28 sm:gap-6 lg:left-12 lg:top-32 xl:left-20 xl:top-40">
-          <span className="w-fit rounded border border-[#54A0C560] bg-[#54A0C520] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">{currentSlide.tag}</span>
-          <h1 className="whitespace-pre-line text-[36px] font-bold leading-[0.95] tracking-[-1px] text-[#FAFAF9] sm:text-[46px] lg:text-[56px]">{currentSlide.title}</h1>
-          <p className="max-w-[520px] text-sm font-normal leading-[1.5] text-[#A0A0A5] sm:text-[15px]">{currentSlide.subtitle}</p>
-          <div className="flex flex-wrap gap-3 text-sm sm:gap-4">
-            <Link to={createPageUrl('Shop')} className="inline-flex items-center gap-2 rounded bg-[#54A0C5] px-5 py-3 font-semibold text-[#FAFAF9] sm:px-7 sm:py-3.5">
-              РЎРјРѕС‚СЂРµС‚СЊ РєР°С‚Р°Р»РѕРі <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link to={`${createPageUrl('ReadySet')}/dark-rider`} className="rounded border border-[#FAFAF930] bg-[#FAFAF908] px-5 py-3 font-medium text-[#FAFAF9] sm:px-7 sm:py-3.5">
-              Р“РѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹
-            </Link>
-          </div>
-        </div>
-
-        <div className="absolute bottom-8 left-4 flex items-center gap-2 sm:bottom-10 sm:left-8 lg:left-12 xl:left-20">
-          {HERO_SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setSlide(idx)}
-              className={`h-[3px] rounded-[2px] transition-all ${idx === slide ? 'w-6 bg-[#54A0C5]' : 'w-6 bg-[#FAFAF930]'}`}
-            />
-          ))}
-        </div>
-        <div className="absolute bottom-8 right-4 text-xs font-medium tracking-[0.14em] text-[#A0A0A5] sm:bottom-10 sm:right-8 lg:right-12 xl:right-20">{String(slide + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}</div>
-      </section>
-
-      <section data-reveal className="reveal-on-scroll border-y border-[#1E1E22] bg-[#0A0A0C] px-4 py-4 sm:px-6 lg:px-10 xl:px-20">
-        <div className="mx-auto w-full max-w-[1440px] overflow-hidden">
-          <div className="brand-marquee">
-            {[...MARQUEE_BRANDS, ...MARQUEE_BRANDS].map((brand, idx) => (
-              <span key={`${brand}-${idx}`} className="mr-12 text-[11px] uppercase tracking-[0.16em] text-slate-400">{brand}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section data-reveal className="reveal-on-scroll bg-[#111114] px-4 py-10 sm:px-6 sm:py-12 lg:px-10 lg:py-14 xl:px-20" style={{ backgroundImage: 'radial-gradient(50% 80% at 10% 70%, rgba(84,160,197,0.07) 0%, rgba(84,160,197,0) 100%)' }}>
-        <div className="mx-auto w-full max-w-[1440px]">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex flex-col gap-3">
-            <h2 className="text-[24px] font-bold tracking-[-0.5px] text-[#FAFAF9] sm:text-[28px]">Р“РѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹</h2>
-            <p className="max-w-[480px] text-sm font-normal leading-[1.5] text-[#A0A0A5]">РЎС‚РёР»СЊ Рё РїСЂР°РєС‚РёС‡РЅРѕСЃС‚СЊ РІ РєР°Р¶РґРѕР№ РґРµС‚Р°Р»Рё. РЎРѕР±СЂР°РЅРЅС‹Рµ РєРѕРјРїР»РµРєС‚С‹ РґР»СЏ РЅР°СЃС‚РѕСЏС‰РёС… СЂР°Р№РґРµСЂРѕРІ.</p>
+        <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-4 pb-12 pt-20 sm:px-6 lg:px-10 lg:pb-16 xl:px-20">
+          <div className="max-w-[700px]">
+            <p className="inline-flex rounded-full border border-[#7eb8d355] bg-[#54A0C51F] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#CBE9F6]">{currentSlide.tag}</p>
+            <h1 className="mt-5 whitespace-pre-line text-[42px] font-semibold uppercase leading-[0.94] tracking-[-2px] text-[#FAFAF9] sm:text-[58px] lg:text-[82px]">{currentSlide.title}</h1>
+            <p className="mt-5 max-w-[560px] text-sm leading-7 text-[#D6D9DF] sm:text-base sm:leading-8">{currentSlide.subtitle}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link to={createPageUrl('Shop')} className={PRIMARY_BUTTON_CLASS}>
+                <span>Смотреть коллекцию</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to={createPageUrl('LooksCatalog')} className={SECONDARY_BUTTON_CLASS}>
+                <span>Готовые образы</span>
+              </Link>
             </div>
-            <Link to={createPageUrl('LooksCatalog')} className="flex items-center gap-1.5 text-[13px] font-medium text-[#A0A0A5] hover:text-[#FAFAF9]">
-              <span>Р’СЃРµ РѕР±СЂР°Р·С‹</span>
-              <span>в†’</span>
-            </Link>
           </div>
-          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {readyLooksData.map((look, idx) => (
-              <div key={look.slug} data-reveal className="reveal-card" style={{ transitionDelay: `${Math.min(idx * 70, 260)}ms` }}>
-                <ReadyLookCard
-                  look={look}
-                  current={readyLookSlides[idx] || 0}
-                  onSelectSlide={(selectedIdx) => {
-                    setReadyLookSlides((prev) => prev.map((value, i) => (i === idx ? selectedIdx : value)));
-                  }}
-                />
-              </div>
+
+          <div className="mt-10 flex items-center gap-2">
+            {HERO_SLIDES.map((_, idx) => (
+              <button key={`hero-${idx}`} type="button" onClick={() => setHeroIndex(idx)} className={`h-1.5 rounded-full transition-all ${idx === heroIndex ? 'w-12 bg-[#54A0C5]' : 'w-2 bg-[#d7d7dc69]'}`} />
             ))}
           </div>
         </div>
       </section>
 
-      <section data-reveal className="reveal-on-scroll px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20" style={{ backgroundImage: 'radial-gradient(60% 80% at 85% 0%, rgba(84,160,197,0.1) 0%, rgba(84,160,197,0) 100%)' }}>
+      <section className="border-y border-[#1E1E22] bg-[#101013]">
+        <div className="relative mx-auto flex w-full max-w-[1440px] overflow-hidden px-0 py-4 sm:px-6 lg:px-10 xl:px-20">
+          <div className="marquee-track flex min-w-full shrink-0 items-center gap-10 pr-10">
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip" className="h-6 w-auto shrink-0 object-contain opacity-90 sm:h-7" />
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip repeat" className="h-6 w-auto shrink-0 object-contain opacity-90 sm:h-7" />
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip repeat second" className="hidden h-6 w-auto shrink-0 object-contain opacity-90 lg:block lg:h-7" />
+            {marqueePromos.map((promo) => (
+              <span key={promo} className="shrink-0 rounded-full border border-[#2A2A2E] bg-[#151519] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4D8DE]">{promo}</span>
+            ))}
+          </div>
+
+          <div aria-hidden className="marquee-track absolute left-full top-4 flex min-w-full items-center gap-10 pr-10">
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip" className="h-6 w-auto shrink-0 object-contain opacity-90 sm:h-7" />
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip repeat" className="h-6 w-auto shrink-0 object-contain opacity-90 sm:h-7" />
+            <img src="/assets/brand-strip-combined.png" alt="Brand strip repeat second" className="hidden h-6 w-auto shrink-0 object-contain opacity-90 lg:block lg:h-7" />
+            {marqueePromos.map((promo) => (
+              <span key={`${promo}-clone`} className="shrink-0 rounded-full border border-[#2A2A2E] bg-[#151519] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4D8DE]">{promo}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section data-reveal className="reveal-on-scroll px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
         <div className="mx-auto w-full max-w-[1440px]">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">РљР°С‚РµРіРѕСЂРёРё С‚РѕРІР°СЂРѕРІ</h3>
-            <Link to={createPageUrl('Shop')} className="flex items-center gap-1.5 text-[13px] font-medium text-[#A0A0A5] hover:text-[#FAFAF9]">
-              <span>Р’СЃРµ РєР°С‚РµРіРѕСЂРёРё</span>
-              <span>в†’</span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Каталог</p>
+              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">Категории товаров</h3>
+            </div>
+            <Link to={createPageUrl('Shop')} className={SECONDARY_BUTTON_CLASS}>
+              <span>Все категории</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {homeCategoriesData.map((category, idx) => (
-              <div key={category.name} data-reveal className="reveal-card" style={{ transitionDelay: `${Math.min(idx * 50, 250)}ms` }}>
-                <Link to={`${createPageUrl('Shop')}?category=${encodeURIComponent(category.name)}`} className="flex h-[180px] flex-col overflow-hidden rounded-lg border border-[#1E1E22] bg-[#16161A]">
-                  <img src={category.image} alt={category.name} className="h-[120px] w-full object-cover" />
-                  <div className="flex h-[60px] items-center justify-between px-4">
-                    <span className="text-sm font-medium text-[#FAFAF9]">{category.name}</span>
-                    <span className="text-base text-[#A0A0A5]">вЂє</span>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
+            {topLevelCategories.map((category) => (
+              <Link key={category.key} to={`${createPageUrl('Shop')}?category=${encodeURIComponent(category.name)}`} className="overflow-hidden rounded-[18px] border border-[#1E1E22] bg-[#16161A]">
+                <img src={category.image} alt={category.name} className="h-[120px] w-full object-cover sm:h-[136px]" />
+                <div className="flex min-h-[72px] items-center justify-between gap-3 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[#FAFAF9]">{category.name}</p>
+                    <p className="mt-1 text-[11px] text-[#8D929C]">{category.description}</p>
                   </div>
-                </Link>
-              </div>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-[#8D929C]" />
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20" style={{ backgroundImage: 'radial-gradient(40% 60% at 90% 30%, rgba(84,160,197,0.06) 0%, rgba(84,160,197,0) 100%)' }}>
-        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-[22px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-2xl">РџРѕРїСѓР»СЏСЂРЅС‹Рµ С‚РѕРІР°СЂС‹</h3>
-            <Link to={createPageUrl('Shop')} className="flex items-center gap-1.5 rounded border border-[#2A2A2E] px-5 py-2.5 text-[13px] font-medium text-[#FAFAF9]">
-              <span>Р’РµСЃСЊ РєР°С‚Р°Р»РѕРі</span>
-              <span>в†’</span>
+      <ProductSection title="Популярные шлемы" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('Шлемы')}`} buttonLabel="Все шлемы" items={popularHelmets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
+      <ProductSection title="Популярные мотокуртки" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('Куртки')}`} buttonLabel="Все мотокуртки" items={popularJackets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
+
+      <section data-reveal className="reveal-on-scroll px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
+        <div className="mx-auto w-full max-w-[1440px]">
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Looks</p>
+              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">Готовые образы</h3>
+            </div>
+            <Link to={createPageUrl('LooksCatalog')} className={PRIMARY_BUTTON_CLASS}>
+              <span>Смотреть все</span>
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {readyLooks.map((look, idx) => (
+              <ReadyLookCard key={look.slug} look={look} current={readyLookSlides[idx] || 0} onSelectSlide={(slideIdx) => setReadyLookSlides((prev) => prev.map((value, currentIdx) => (currentIdx === idx ? slideIdx : value)))} />
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
+        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-8 rounded-[30px] border border-[#1E1E22] bg-[linear-gradient(180deg,#151519_0%,#101013_100%)] p-5 sm:p-7 lg:grid-cols-[300px_minmax(0,1fr)] lg:p-8">
+          <div className="flex min-h-[320px] flex-col items-center justify-between rounded-[24px] border border-[#232329] bg-[#18181D] px-6 py-7 text-center">
+            <div>
+              <p className="text-[34px] font-semibold text-[#FAFAF9]">{AVITO_RATING}</p>
+              <div className="mt-4 flex items-center justify-center gap-1.5 text-[#F4B400]">
+                {Array.from({ length: 5 }).map((_, idx) => <Star key={`summary-star-${idx}`} className="h-8 w-8 fill-current" />)}
+              </div>
+            </div>
+            <div>
+              <p className="text-[30px] font-semibold tracking-[-0.8px] text-[#FAFAF9]">Avito</p>
+              <p className="mt-3 text-sm text-[#8E8E95]">{AVITO_RATING_COUNT}</p>
+            </div>
+            <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className={PRIMARY_BUTTON_CLASS}>Смотреть отзывы</a>
+          </div>
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            {visibleFeatured.map((item, idx) => (
-              <div key={item.productId || `${item.name}-${idx}`} className="h-full">
-                <article
-                  onClick={() => navigate(createProductUrl({ id: item.productId, slug: item.slug, name: item.name }))}
-                  className="flex h-full cursor-pointer flex-col overflow-hidden rounded-lg border border-[#1E1E22] bg-[#16161A]"
-                >
-                  <div className="relative h-[220px] w-full sm:h-[240px] lg:h-[260px]">
-                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
-                    {item.badge && <span className={`absolute left-3 top-3 rounded px-2.5 py-1 text-[10px] font-semibold tracking-[1px] ${item.badgeClass}`}>{item.badge}</span>}
-                  </div>
-                  <div className="flex flex-1 flex-col gap-3 p-5">
-                    <p className="min-h-[44px] text-[15px] font-medium text-[#FAFAF9] line-clamp-2">{item.name}</p>
-                    <div className="flex items-center gap-1.5 text-xs text-[#A0A0A5]"><Star className="h-3.5 w-3.5 fill-[#54A0C5] text-[#54A0C5]" /><span>{item.rating}</span></div>
-                    <div className="mt-auto flex items-center justify-between">
-                      <p className="text-lg font-bold text-[#FAFAF9]">{item.priceText}</p>
-                      {(() => {
-                        const cartQty = getCartQuantity(item.productId, null);
-                        const maxAllowed = getMaxAllowedQty(item.productId);
-                        const canAdd = maxAllowed > cartQty;
-                        const justAdded = Boolean(addedPulseByProduct[item.productId]);
-                        return (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const result = addToCart(item.productId, 1);
-                              if (result?.added) {
-                                triggerAddAnimation(item.productId);
-                              }
-                            }}
-                            disabled={!canAdd}
-                            className={`inline-flex h-10 items-center gap-2 rounded-md px-3 text-sm font-medium transition-all sm:px-4 ${
-                              canAdd
-                                ? justAdded
-                                  ? 'bg-[#32D583] text-[#0D0D0F] scale-[1.03]'
-                                  : 'bg-[#54A0C5] text-[#FAFAF9] hover:bg-[#4a94b7]'
-                                : 'bg-[#2A2A2E] text-[#6B6B70] cursor-not-allowed'
-                            }`}
-                          >
-                            {justAdded ? <span className="text-base leading-none">вњ“</span> : <ShoppingBag className="h-4 w-4" />}
-                            <span className="hidden sm:inline">{justAdded ? 'Р”РѕР±Р°РІР»РµРЅРѕ' : canAdd ? 'Р’ РєРѕСЂР·РёРЅСѓ' : 'Р›РёРјРёС‚'}</span>
-                          </button>
-                        );
-                      })()}
+          <div className="flex flex-col gap-4">
+            {activeReview ? (
+              <article className="rounded-[24px] border border-[#2A2A2E] bg-[#F3F0EA] p-5 text-[#1C1C20] shadow-[0_14px_30px_rgba(0,0,0,0.18)] sm:p-7">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="h-14 w-14 overflow-hidden rounded-full bg-[#D0D84A] text-[#FAFAF9]">
+                      {activeReview.avatarUrl ? <img src={activeReview.avatarUrl} alt={activeReview.name || 'Покупатель'} loading="lazy" className="h-full w-full object-cover" /> : null}
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold">{activeReview.name || 'Покупатель'}</p>
+                      <div className="mt-2 flex items-center gap-1 text-[#F4B400]">
+                        {Array.from({ length: 5 }).map((_, idx) => <Star key={`active-review-star-${idx}`} className={`h-4 w-4 ${idx < Number(activeReview.rating || 0) ? 'fill-current' : 'text-[#D2C9BA]'}`} />)}
+                      </div>
                     </div>
                   </div>
-                </article>
-              </div>
-            ))}
+                  <div className="inline-flex items-center gap-2">
+                    <button type="button" onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev - 1 + activeReviews.length) % activeReviews.length)} className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#D5CEC3] text-[#5E554B] transition-colors hover:border-[#8B5E3C] hover:text-[#8B5E3C]">
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button type="button" onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev + 1) % activeReviews.length)} className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#D5CEC3] text-[#5E554B] transition-colors hover:border-[#8B5E3C] hover:text-[#8B5E3C]">
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <p className="mt-6 text-[28px] font-medium leading-tight tracking-[-0.5px] text-[#2A2420]">«{activeReview.product}»</p>
+                <p className="mt-6 min-h-[96px] text-[18px] leading-8 text-[#3A342F]">
+                  {expandedReviewMap[reviewIndex] || String(activeReview.text || '').length <= 160 ? String(activeReview.text || '') : `${String(activeReview.text || '').slice(0, 160)}...`}
+                </p>
+                {String(activeReview.text || '').length > 160 ? (
+                  <button type="button" onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [reviewIndex]: !prev[reviewIndex] }))} className="mt-3 text-sm font-medium text-[#8B5E3C] hover:text-[#6f4a2f]">
+                    {expandedReviewMap[reviewIndex] ? 'Свернуть' : 'Читать полностью'}
+                  </button>
+                ) : null}
+
+                <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+                  <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="text-sm text-[#5E554B] underline-offset-4 hover:text-[#1C1C20] hover:underline">Отзыв Avito</a>
+                  <div className="flex min-w-[220px] items-center gap-3">
+                    <div className="h-px flex-1 bg-[#D8D2C7]" />
+                    <div className="flex items-center gap-1.5">
+                      {activeReviews.map((_, idx) => (
+                        <button key={`review-dot-${idx}`} type="button" onClick={() => setReviewIndex(idx)} className={`h-1.5 rounded-full transition-all ${idx === reviewIndex ? 'w-12 bg-[#8B5E3C]' : 'w-2 bg-[#D8D2C7]'}`} aria-label={`Отзыв ${idx + 1}`} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]">
+                <span className="text-sm font-medium text-[#C0B39F]">Москва</span>
+                <span className="text-base font-semibold">{YANDEX_RATING}</span>
+                <div className="flex items-center gap-0.5 text-[#F4B400]">
+                  {Array.from({ length: 5 }).map((_, idx) => <Star key={`yandex-star-${idx}`} className="h-3.5 w-3.5 fill-current" />)}
+                </div>
+              </a>
+              <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]">
+                <span className="text-sm font-medium text-[#C0B39F]">Яндекс Карты</span>
+                <span className="text-sm text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -628,34 +603,16 @@ export default function Home() {
       <section className="px-4 pb-10 sm:px-6 sm:pb-12 lg:px-10 xl:px-20">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-8 rounded-[28px] border border-[#1E1E22] bg-[linear-gradient(135deg,#121216_0%,#0d0d10_100%)] p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-10">
           <div className="max-w-[560px]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Telegram-РєР°РЅР°Р»</p>
-            <h3 className="mt-4 text-[34px] font-semibold uppercase leading-[1.04] tracking-[-1.4px] text-[#FAFAF9] sm:text-[46px]">
-              РҐРѕС‚РёС‚Рµ СѓР·РЅР°РІР°С‚СЊ
-              <br />
-              Рѕ РЅРѕРІС‹С… РїРѕСЃС‚СѓРїР»РµРЅРёСЏС…
-              <br />
-              СЂР°РЅСЊС€Рµ РІСЃРµС…?
-            </h3>
-            <p className="mt-5 max-w-[420px] text-base leading-8 text-[#A0A0A5]">
-              Р’ РєР°РЅР°Р»Рµ СЂР°РЅСЊС€Рµ РІСЃРµС… РїРѕРєР°Р·С‹РІР°РµРј СЃРІРµР¶РёРµ РїРѕСЃС‚СѓРїР»РµРЅРёСЏ, СЂРµРґРєРёРµ РїРѕР·РёС†РёРё Рё РєРѕСЂРѕС‚РєРѕ СЂР°СЃСЃРєР°Р·С‹РІР°РµРј, С‡С‚Рѕ СѓР¶Рµ РїСЂРёРµС…Р°Р»Рѕ РІ С€РѕСѓСЂСѓРј.
-            </p>
-            <a
-              href={TELEGRAM_CHANNEL_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-7 inline-flex items-center gap-2 rounded-none border border-[#8B5E3C] px-6 py-3 text-sm font-medium text-[#FAFAF9] transition-colors hover:border-[#B88357] hover:bg-[#8B5E3C14]"
-            >
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Telegram-канал</p>
+            <h3 className="mt-4 whitespace-pre-line text-[34px] font-semibold uppercase leading-[1.04] tracking-[-1.4px] text-[#FAFAF9] sm:text-[46px]">Хотите узнавать{`\n`}о новых поступлениях{`\n`}раньше всех?</h3>
+            <p className="mt-5 max-w-[420px] text-base leading-8 text-[#A0A0A5]">В канале раньше всех показываем свежие поступления, редкие позиции и коротко рассказываем, что уже приехало в шоурум.</p>
+            <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className={`${PRIMARY_BUTTON_CLASS} mt-7`}>
               <Send className="h-4 w-4" />
-              РџРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° Telegram
+              Подписаться на Telegram
             </a>
           </div>
 
-          <a
-            href={TELEGRAM_CHANNEL_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="relative ml-auto block w-full max-w-[520px] rounded-[22px] border border-[#2A2A2E] bg-[#F4F1EA] p-0 text-[#171717] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-1"
-          >
+          <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className="relative ml-auto block w-full max-w-[520px] overflow-hidden rounded-[22px] border border-[#2A2A2E] bg-[#F4F1EA] text-[#171717] shadow-[0_20px_60px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-1">
             <div className="flex items-center justify-between border-b border-[#D9D2C7] px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#111114] text-sm font-semibold text-[#FAFAF9]">MT</div>
@@ -668,166 +625,15 @@ export default function Home() {
             </div>
             <img src={TELEGRAM_PREVIEW_IMAGE} alt="Telegram preview" className="h-[260px] w-full object-cover" />
             <div className="space-y-4 px-5 py-5">
-              <p className="text-[15px] leading-8 text-[#1E1E22]">
-                РЎРєРѕСЂРѕ РїРѕРєР°Р¶РµРј РЅРѕРІС‹Рµ С€Р»РµРјС‹, РїРµСЂС‡Р°С‚РєРё Рё РєСѓСЂС‚РєРё. РЎР°РјС‹Рµ РёРЅС‚РµСЂРµСЃРЅС‹Рµ РїРѕР·РёС†РёРё СЃРЅР°С‡Р°Р»Р° РїСѓР±Р»РёРєСѓРµРј РІ РєР°РЅР°Р»Рµ, Р° СѓР¶Рµ РїРѕС‚РѕРј РЅР° СЃР°Р№С‚Рµ.
-              </p>
-              <p className="text-[15px] font-medium text-[#1E1E22]">#РЅРѕРІРёРЅРєРё #СЌРєРёРїРёСЂРѕРІРєР°</p>
+              <p className="text-[15px] leading-8 text-[#1E1E22]">Скоро покажем новые шлемы, перчатки и куртки. Самые интересные позиции сначала публикуем в канале, а уже потом на сайте.</p>
+              <p className="text-[15px] font-medium text-[#1E1E22]">#новинки #экипировка</p>
               <div className="flex flex-wrap items-center gap-3 text-sm text-[#6C655B]">
-                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">8 РѕРіРѕРЅСЊ</span>
-                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">1 Р»Р°Р№Рє</span>
+                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">8 огонь</span>
+                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">1 лайк</span>
                 <span className="ml-auto text-xs">t.me/mototom</span>
               </div>
             </div>
           </a>
-        </div>
-      </section>
-
-      <section className="px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
-        <div className="mx-auto w-full max-w-[1440px]">
-          <div className="mb-10 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">РћС‚Р·С‹РІС‹</p>
-            <h3 className="mt-4 text-[36px] font-semibold uppercase tracking-[-1.4px] text-[#FAFAF9] sm:text-[54px]">
-              Р§С‚Рѕ РіРѕРІРѕСЂСЏС‚ РЅР°С€Рё РїРѕРєСѓРїР°С‚РµР»Рё
-            </h3>
-          </div>
-
-          <div className="rounded-[30px] border border-[#1E1E22] bg-[linear-gradient(180deg,#151519_0%,#101013_100%)] p-5 sm:p-7 lg:p-8">
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
-              <div className="flex min-h-[320px] flex-col items-center justify-between rounded-[22px] border border-[#232329] bg-[#18181D] px-6 py-7 text-center">
-                <div>
-                  <p className="text-[34px] font-semibold text-[#FAFAF9]">{AVITO_RATING}</p>
-                  <div className="mt-4 flex items-center justify-center gap-1.5 text-[#F4B400]">
-                    {Array.from({ length: 5 }).map((_, idx) => (
-                      <Star key={`avito-summary-star-${idx}`} className="h-8 w-8 fill-current" />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-[30px] font-semibold tracking-[-0.8px] text-[#FAFAF9]">Avito</p>
-                  <p className="mt-3 text-sm text-[#8E8E95]">{AVITO_RATING_COUNT}</p>
-                </div>
-                <a
-                  href={AVITO_REVIEWS_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-md border border-[#31313A] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors hover:border-[#54A0C5] hover:text-[#54A0C5]"
-                >
-                  РЎРјРѕС‚СЂРµС‚СЊ РѕС‚Р·С‹РІС‹
-                </a>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                {activeReview ? (
-                  <article className="rounded-[22px] border border-[#2A2A2E] bg-[#F3F0EA] p-5 text-[#1C1C20] shadow-[0_14px_30px_rgba(0,0,0,0.18)] sm:p-7">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div className="h-14 w-14 overflow-hidden rounded-full bg-[#D0D84A] text-[#FAFAF9]">
-                          {activeReview.avatarUrl ? (
-                            <img src={activeReview.avatarUrl} alt={activeReview.name || activeReview.author || 'РџРѕРєСѓРїР°С‚РµР»СЊ'} loading="lazy" className="h-full w-full object-cover" />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-xl font-semibold">
-                              {String(activeReview.name || activeReview.author || '?').slice(0, 1).toUpperCase()}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-lg font-semibold">{activeReview.name || activeReview.author || 'РџРѕРєСѓРїР°С‚РµР»СЊ'}</p>
-                          <div className="mt-2 flex items-center gap-1 text-[#F4B400]">
-                            {Array.from({ length: 5 }).map((_, idx) => (
-                              <Star key={`active-review-star-${idx}`} className={`h-4 w-4 ${idx < Number(activeReview.rating || 0) ? 'fill-current' : 'text-[#D2C9BA]'}`} />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="inline-flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev - 1 + activeReviews.length) % activeReviews.length)}
-                          disabled={activeReviews.length === 0}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#D5CEC3] text-[#5E554B] transition-colors hover:border-[#8B5E3C] hover:text-[#8B5E3C] disabled:opacity-40"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => activeReviews.length > 0 && setReviewIndex((prev) => (prev + 1) % activeReviews.length)}
-                          disabled={activeReviews.length === 0}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#D5CEC3] text-[#5E554B] transition-colors hover:border-[#8B5E3C] hover:text-[#8B5E3C] disabled:opacity-40"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    <p className="mt-6 text-[28px] font-medium leading-tight tracking-[-0.5px] text-[#2A2420]">В«{activeReview.product}В»</p>
-                    <p className="mt-6 min-h-[96px] text-[18px] leading-8 text-[#3A342F]">
-                      {expandedReviewMap[reviewIndex] || String(activeReview.text || '').length <= 160
-                        ? String(activeReview.text || '')
-                        : `${String(activeReview.text || '').slice(0, 160)}...`}
-                    </p>
-                    {String(activeReview.text || '').length > 160 ? (
-                      <button
-                        type="button"
-                        onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [reviewIndex]: !prev[reviewIndex] }))}
-                        className="mt-3 text-sm font-medium text-[#8B5E3C] hover:text-[#6f4a2f]"
-                      >
-                        {expandedReviewMap[reviewIndex] ? 'РЎРІРµСЂРЅСѓС‚СЊ' : 'Р§РёС‚Р°С‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ'}
-                      </button>
-                    ) : null}
-                    <div className="mt-8 flex items-center justify-between gap-4">
-                      <a
-                        href={AVITO_REVIEWS_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm text-[#5E554B] underline-offset-4 hover:text-[#1C1C20] hover:underline"
-                      >
-                        РћС‚Р·С‹РІ Avito
-                      </a>
-                      <div className="flex min-w-[220px] items-center gap-3">
-                        <div className="h-px flex-1 bg-[#D8D2C7]" />
-                        <div className="flex items-center gap-1.5">
-                          {activeReviews.map((_, idx) => (
-                            <button
-                              key={`review-dot-${idx}`}
-                              type="button"
-                              onClick={() => setReviewIndex(idx)}
-                              className={`h-1.5 rounded-full transition-all ${idx === reviewIndex ? 'w-12 bg-[#8B5E3C]' : 'w-2 bg-[#D8D2C7]'}`}
-                              aria-label={`РћС‚Р·С‹РІ ${idx + 1}`}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                ) : null}
-
-                <div className="flex flex-wrap items-center justify-center gap-4 pt-1 lg:justify-start">
-                  <a
-                    href={YANDEX_REVIEWS_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]"
-                  >
-                    <span className="text-sm font-medium text-[#C0B39F]">РњРѕСЃРєРІР°</span>
-                    <span className="text-base font-semibold">{YANDEX_RATING}</span>
-                    <div className="flex items-center gap-0.5 text-[#F4B400]">
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <Star key={`yandex-moscow-${idx}`} className="h-3.5 w-3.5 fill-current" />
-                      ))}
-                    </div>
-                  </a>
-                  <a
-                    href={YANDEX_REVIEWS_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]"
-                  >
-                    <span className="text-sm font-medium text-[#C0B39F]">РЇРЅРґРµРєСЃ РљР°СЂС‚С‹</span>
-                    <span className="text-sm text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -847,5 +653,3 @@ export default function Home() {
     </div>
   );
 }
-
-

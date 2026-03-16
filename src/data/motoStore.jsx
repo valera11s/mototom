@@ -193,7 +193,7 @@ function nextOrderNumber() {
 }
 
 function fallbackCategories() {
-  return DEFAULT_CATEGORY_NAMES.map((name, idx) => ({ id: `fallback-${idx}`, name, parent_id: null, level: 0 }));
+  return DEFAULT_CATEGORY_NAMES.map((name, idx) => ({ id: `fallback-${idx}`, name, parent_id: null, level: 0, has_sizes: true }));
 }
 
 function normalizeCategories(raw) {
@@ -202,7 +202,7 @@ function normalizeCategories(raw) {
   const list = raw
     .map((item, idx) => {
       if (typeof item === 'string') {
-        return { id: `legacy-${idx}`, name: item, parent_id: null, level: 0 };
+        return { id: `legacy-${idx}`, name: item, parent_id: null, level: 0, has_sizes: true };
       }
       return {
         id: item.id ?? `cat-${idx}`,
@@ -266,6 +266,7 @@ export function MotoStoreProvider({ children }) {
   const [cart, setCart] = useState(() => readStorage(CART_KEY, []));
   const [loading, setLoading] = useState(true);
   const [store, setStore] = useState({ name: 'MOTOTOM', freeShippingFrom: 10000 });
+  const [settings, setSettings] = useState({});
   const [categories, setCategories] = useState(() => fallbackCategories());
   const [brands, setBrands] = useState([]);
   const [products, setProducts] = useState([]);
@@ -282,6 +283,7 @@ export function MotoStoreProvider({ children }) {
 
         if (disposed) return;
         setStore(bootstrapData?.store || { name: 'MOTOTOM', freeShippingFrom: 10000 });
+        setSettings(bootstrapData?.settings || {});
         setCategories(normalizeCategories(bootstrapData?.categories || []));
         setBrands(normalizeBrands(bootstrapData?.brands || []));
         setProducts(normalizeProducts(bootstrapData?.products || []));
@@ -290,6 +292,7 @@ export function MotoStoreProvider({ children }) {
         if (!disposed) {
           console.warn('Shop data fallback:', error);
           setStore({ name: 'MOTOTOM', freeShippingFrom: 10000 });
+          setSettings({});
           setCategories(fallbackCategories());
           setBrands([]);
           setProducts([]);
@@ -442,6 +445,7 @@ export function MotoStoreProvider({ children }) {
   const value = {
     loading,
     store,
+    settings,
     categories,
     brands,
     products,

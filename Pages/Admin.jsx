@@ -540,8 +540,8 @@ export default function Admin() {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingBrand, setEditingBrand] = useState(null);
   const [editingLook, setEditingLook] = useState(null);
-  const [newCategory, setNewCategory] = useState({ name: '', parent_id: '', product_name_prefix: '' });
-  const [categoryEditForm, setCategoryEditForm] = useState({ name: '', parent_id: '', product_name_prefix: '' });
+  const [newCategory, setNewCategory] = useState({ name: '', parent_id: '', product_name_prefix: '', has_sizes: true });
+  const [categoryEditForm, setCategoryEditForm] = useState({ name: '', parent_id: '', product_name_prefix: '', has_sizes: true });
   const [newBrand, setNewBrand] = useState({ name: '', sort_order: 0, popular: false });
   const [newCustomer, setNewCustomer] = useState({ full_name: '', phone: '', email: '', note: '' });
   const [lookForm, setLookForm] = useState(LOOK_FORM_INITIAL);
@@ -966,12 +966,13 @@ export default function Admin() {
           name: payload.name,
           parent_id: payload.parent_id || null,
           product_name_prefix: payload.product_name_prefix || null,
+          has_sizes: payload.has_sizes !== false,
         }),
       }),
     onSuccess: () => {
       toast.success('Категория создана');
       setCategoryModalOpen(false);
-      setNewCategory({ name: '', parent_id: '', product_name_prefix: '' });
+      setNewCategory({ name: '', parent_id: '', product_name_prefix: '', has_sizes: true });
       queryClient.invalidateQueries({ queryKey: ['crm-categories'] });
     },
     onError: (e) => toast.error(e.message),
@@ -1113,6 +1114,7 @@ export default function Admin() {
       name: category?.name || '',
       parent_id: category?.parent_id ? String(category.parent_id) : '',
       product_name_prefix: category?.product_name_prefix || '',
+      has_sizes: category?.has_sizes !== false,
     });
     setCategoryEditModalOpen(true);
   };
@@ -2012,7 +2014,11 @@ export default function Admin() {
             {Object.entries(settingsQ.data || {}).map(([key, value]) => (
               <div key={key} className="grid grid-cols-1 items-center gap-2 md:grid-cols-[240px_1fr_auto]">
                 <label className="text-sm text-[#b2b2b8]">{key}</label>
-                <input className="crm-input" defaultValue={value || ''} onBlur={(e) => saveSetting.mutate({ key, value: e.target.value })} />
+                {key === 'home_marquee_promos' ? (
+                  <textarea className="crm-input min-h-[110px] !pt-3" defaultValue={value || ''} onBlur={(e) => saveSetting.mutate({ key, value: e.target.value })} />
+                ) : (
+                  <input className="crm-input" defaultValue={value || ''} onBlur={(e) => saveSetting.mutate({ key, value: e.target.value })} />
+                )}
                 <button className="crm-outline-btn rounded border px-3 py-2 text-xs">Сохранить</button>
               </div>
             ))}
@@ -2501,6 +2507,10 @@ export default function Admin() {
                 {categories.map((c) => <option key={c.id} value={c.id}>{`${' '.repeat(Number(c.level || 0))}${c.name}`}</option>)}
               </select>
               <input className="crm-input" placeholder="Префикс названия товара (необязательно)" value={newCategory.product_name_prefix} onChange={(e) => setNewCategory((p) => ({ ...p, product_name_prefix: e.target.value }))} />
+              <label className="flex items-center gap-2 text-sm text-[#d8d8dd]">
+                <input type="checkbox" checked={newCategory.has_sizes !== false} onChange={(e) => setNewCategory((p) => ({ ...p, has_sizes: e.target.checked }))} />
+                <span>Показывать размеры в каталоге</span>
+              </label>
             </div>
             <div className="mt-5 flex justify-end gap-2">
               <button className="crm-outline-btn rounded-lg border px-4 py-2 text-sm" onClick={() => setCategoryModalOpen(false)}>Отмена</button>
@@ -2520,6 +2530,10 @@ export default function Admin() {
                 {categories.filter((c) => String(c.id) !== String(editingCategory.id)).map((c) => <option key={c.id} value={c.id}>{`${' '.repeat(Number(c.level || 0))}${c.name}`}</option>)}
               </select>
               <input className="crm-input" placeholder="Префикс названия товара (необязательно)" value={categoryEditForm.product_name_prefix} onChange={(e) => setCategoryEditForm((p) => ({ ...p, product_name_prefix: e.target.value }))} />
+              <label className="flex items-center gap-2 text-sm text-[#d8d8dd]">
+                <input type="checkbox" checked={categoryEditForm.has_sizes !== false} onChange={(e) => setCategoryEditForm((p) => ({ ...p, has_sizes: e.target.checked }))} />
+                <span>Показывать размеры в каталоге</span>
+              </label>
             </div>
             <div className="mt-5 flex justify-end gap-2">
               <button className="crm-outline-btn rounded-lg border px-4 py-2 text-sm" onClick={() => setCategoryEditModalOpen(false)}>Отмена</button>

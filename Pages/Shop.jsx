@@ -4,6 +4,13 @@ import { ChevronDown, Star, Search, SearchX, ShoppingBag } from 'lucide-react';
 import { useMotoStore } from '../src/data/motoStore.jsx';
 import { createProductUrl, formatPrice } from '../src/utils.js';
 import Seo from '../src/components/Seo.jsx';
+import {
+  getBrandLogo,
+  HOME_CATEGORY_META,
+  PRIMARY_BUTTON_CLASS,
+  PRODUCT_BADGE_CLASS,
+  SECONDARY_BUTTON_CLASS,
+} from '../src/data/siteTheme.js';
 
 const GLOBAL_CATEGORIES = [
   {
@@ -122,7 +129,7 @@ function stripVariantId(id) {
 
 export default function Shop() {
   const navigate = useNavigate();
-  const { products, addToCart } = useMotoStore();
+  const { products, categories, addToCart } = useMotoStore();
   const [params] = useSearchParams();
 
   const [categoryKey, setCategoryKey] = useState(() => resolveCategoryKey(params.get('category')));
@@ -145,6 +152,21 @@ export default function Shop() {
     () => GLOBAL_CATEGORIES.find((item) => item.key === categoryKey) || GLOBAL_CATEGORIES[0],
     [categoryKey]
   );
+
+  const activeCategoryMeta = useMemo(() => {
+    const topLevel = Array.isArray(categories) ? categories.filter((item) => item.parent_id == null) : [];
+    const match = topLevel.find((item) => {
+      const normalized = String(item.name || '').toLowerCase();
+      return (
+        normalized === String(activeCategory.label || '').toLowerCase() ||
+        activeCategory.sourceCategories.some((source) => normalized === String(source).toLowerCase())
+      );
+    });
+    return {
+      ...activeCategory,
+      has_sizes: match?.has_sizes !== false,
+    };
+  }, [activeCategory, categories]);
 
   const source = useMemo(() => {
     const base = products.filter((item) => activeCategory.sourceCategories.includes(item.category));
@@ -180,10 +202,13 @@ export default function Shop() {
     [activeCategory, full]
   );
   const availableBrands = useMemo(() => unique(full.map((item) => item.brand)), [full]);
-  const availableSizes = useMemo(() => unique(full.flatMap((item) => item.sizes || [])).slice(0, 12), [full]);
+  const availableSizes = useMemo(
+    () => (activeCategoryMeta.has_sizes ? unique(full.flatMap((item) => item.sizes || [])).slice(0, 12) : []),
+    [full, activeCategoryMeta.has_sizes]
+  );
   const availableRuSizes = useMemo(
-    () => RU_SIZE_ORDER.filter((ru) => availableSizes.includes(RU_SIZE_TO_INT_SIZE[ru])),
-    [availableSizes]
+    () => (activeCategoryMeta.has_sizes ? RU_SIZE_ORDER.filter((ru) => availableSizes.includes(RU_SIZE_TO_INT_SIZE[ru])) : []),
+    [availableSizes, activeCategoryMeta.has_sizes]
   );
   const effectiveIntlSizes = useMemo(
     () => unique([...selectedSizes, ...selectedRuSizes.map((ru) => RU_SIZE_TO_INT_SIZE[ru]).filter(Boolean)]),
@@ -338,9 +363,21 @@ export default function Shop() {
                   key={item.key}
                   type="button"
                   onClick={() => setCategoryKey(item.key)}
-                  className={`min-h-[40px] rounded-md border px-2 py-1 text-xs font-medium ${categoryKey === item.key ? 'border-[#54A0C5] bg-[#54A0C5] text-[#FAFAF9]' : 'border-[#2A2A2E] text-[#A0A0A5]'}`}
+                  className={`min-h-[86px] overflow-hidden rounded-xl border text-left ${categoryKey === item.key ? 'border-[#7dc0e44d] bg-[linear-gradient(90deg,#4a86a5_0%,#54A0C5_68%,#6bb2d4_100%)] text-[#FAFAF9]' : 'border-[#2A2A2E] bg-[#16161A] text-[#A0A0A5]'}`}
                 >
-                  {item.label}
+                  <div className="relative h-full">
+                    <img
+                      src={HOME_CATEGORY_META[item.key]?.image || HOME_CATEGORY_META.helmets.image}
+                      alt={item.label}
+                      className={`absolute inset-0 h-full w-full object-cover ${categoryKey === item.key ? 'opacity-32' : 'opacity-22'}`}
+                    />
+                    <div className="relative flex h-full flex-col justify-end bg-gradient-to-t from-[#0D0D0F] via-[#0D0D0FA8] to-transparent px-3 py-2">
+                      <span className="text-sm font-semibold">{item.label}</span>
+                      <span className={`mt-1 text-[11px] ${categoryKey === item.key ? 'text-[#EAF7FD]' : 'text-[#8D929C]'}`}>
+                        {HOME_CATEGORY_META[item.key]?.description || 'Экипировка'}
+                      </span>
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
@@ -370,9 +407,12 @@ export default function Shop() {
               <div className="space-y-3.5 border-t border-[#1E1E22] pt-4">
                 <p className="text-sm font-semibold text-[#FAFAF9]">Бренд</p>
                 {availableBrands.map((brand) => (
-                  <button key={brand} type="button" onClick={() => toggle(brand, selectedBrands, setSelectedBrands)} className="flex w-full items-center gap-2.5 text-left text-[13px] text-[#A0A0A5]">
-                    <Check checked={selectedBrands.includes(brand)} />
-                    <span>{brand}</span>
+                  <button key={brand} type="button" onClick={() => toggle(brand, selectedBrands, setSelectedBrands)} className="flex w-full items-center justify-between gap-3 text-left text-[13px] text-[#A0A0A5]">
+                    <span className="flex items-center gap-2.5">
+                      <Check checked={selectedBrands.includes(brand)} />
+                      <span>{brand}</span>
+                    </span>
+                    {getBrandLogo(brand) ? <img src={getBrandLogo(brand)} alt={brand} className="h-4 w-auto max-w-[72px] object-contain opacity-90" /> : null}
                   </button>
                 ))}
               </div>
@@ -398,7 +438,7 @@ export default function Shop() {
                 <input className="price-range w-full" type="range" min={0} max={120000} value={Math.min(maxPrice, 120000)} onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice + 100))} />
               </div>
 
-              {availableRuSizes.length > 0 && (
+              {activeCategoryMeta.has_sizes && availableRuSizes.length > 0 && (
                 <>
                   <div className="space-y-3.5 border-t border-[#1E1E22] pt-4">
                     <p className="text-sm font-semibold text-[#FAFAF9]">Российский размер</p>
@@ -418,7 +458,7 @@ export default function Shop() {
                 </>
               )}
 
-              {availableSizes.length > 0 && (
+              {activeCategoryMeta.has_sizes && availableSizes.length > 0 && (
                 <>
                   <div className="space-y-3.5 border-t border-[#1E1E22] pt-4">
                     <p className="text-sm font-semibold text-[#FAFAF9]">Размер</p>
@@ -458,10 +498,10 @@ export default function Shop() {
                   : 'По выбранным фильтрам товары не найдены. Попробуйте изменить фильтры.'}
               </p>
               <div className="flex items-center gap-3">
-                <button type="button" onClick={() => setSearchQuery('')} className="rounded-md bg-[#54A0C5] px-5 py-2.5 text-xs font-medium text-[#FAFAF9]">
+                <button type="button" onClick={() => setSearchQuery('')} className={`${PRIMARY_BUTTON_CLASS} px-5 py-2.5 text-xs`}>
                   Сбросить поиск
                 </button>
-                <button type="button" onClick={reset} className="rounded-md border border-[#2A2A2E] px-5 py-2.5 text-xs font-medium text-[#A0A0A5]">
+                <button type="button" onClick={reset} className={`${SECONDARY_BUTTON_CLASS} px-5 py-2.5 text-xs text-[#A0A0A5]`}>
                   Показать всё
                 </button>
               </div>
@@ -479,6 +519,11 @@ export default function Shop() {
                       <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                       {idx === 0 && <span className="absolute left-3 top-3 rounded bg-[#54A0C5] px-2.5 py-1 text-[10px] font-semibold tracking-[1px] text-[#FAFAF9]">ХИТ ПРОДАЖ</span>}
                       {item.isNew && idx !== 0 && <span className="absolute left-3 top-3 rounded bg-[#2A2A2E] px-2.5 py-1 text-[10px] font-semibold tracking-[1px] text-[#FAFAF9]">НОВИНКА</span>}
+                      <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${
+                        String(item.condition || 'new').toLowerCase() === 'used' ? PRODUCT_BADGE_CLASS.used : PRODUCT_BADGE_CLASS.new
+                      }`}>
+                        {String(item.condition || 'new').toLowerCase() === 'used' ? 'Б/У' : 'Новый'}
+                      </span>
                     </div>
                     <div className="space-y-3 p-5">
                       <p className="text-[15px] font-medium text-[#FAFAF9]">{item.name}</p>
@@ -492,7 +537,7 @@ export default function Shop() {
                             const baseId = stripVariantId(item.id);
                             addToCart(baseId, 1, item.sizes?.[0] || 'M');
                           }}
-                          className="inline-flex h-10 items-center gap-2 rounded-md bg-[#54A0C5] px-4 text-sm font-medium text-[#FAFAF9] transition-colors hover:bg-[#4a94b7]"
+                          className={`${PRIMARY_BUTTON_CLASS} h-10 px-4 py-0 text-sm`}
                         >
                           <ShoppingBag className="h-4 w-4" />
                           В корзину
@@ -506,7 +551,7 @@ export default function Shop() {
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
                 <button type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} className="h-9 w-9 rounded-md border border-[#2A2A2E] text-[#A0A0A5]">‹</button>
                 {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
-                  <button key={n} type="button" onClick={() => setPage(n)} className={`h-9 w-9 rounded-md border text-xs ${n === current ? 'border-[#54A0C5] bg-[#54A0C5] text-[#FAFAF9]' : 'border-[#2A2A2E] text-[#A0A0A5]'}`}>{n}</button>
+                  <button key={n} type="button" onClick={() => setPage(n)} className={`h-9 w-9 rounded-md border text-xs ${n === current ? 'border-[#7dc0e44d] bg-[linear-gradient(90deg,#4a86a5_0%,#54A0C5_68%,#6bb2d4_100%)] text-[#FAFAF9]' : 'border-[#2A2A2E] text-[#A0A0A5]'}`}>{n}</button>
                 ))}
                 <button type="button" onClick={() => setPage((p) => Math.min(pages, p + 1))} className="h-9 w-9 rounded-md border border-[#2A2A2E] text-[#A0A0A5]">›</button>
               </div>

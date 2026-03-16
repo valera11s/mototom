@@ -1,0 +1,78 @@
+export const PRIMARY_BUTTON_CLASS =
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-[#9fd3ec3d] bg-[linear-gradient(90deg,#4a86a5_0%,#54A0C5_68%,#6bb2d4_100%)] px-5 py-3 text-sm font-medium text-[#FAFAF9] shadow-[0_10px_30px_rgba(84,160,197,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(84,160,197,0.24)]';
+
+export const SECONDARY_BUTTON_CLASS =
+  'inline-flex items-center justify-center gap-2 rounded-xl border border-[#2A2A2E] bg-[#16161A] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors hover:border-[#54A0C5] hover:bg-[#18181D]';
+
+export const PRODUCT_BADGE_CLASS = {
+  new: 'bg-[#1D4ED8] text-[#EFF6FF]',
+  used: 'bg-[#1F2937] text-[#BFDBFE]',
+};
+
+export const BRAND_LOGOS = {
+  shoei: '/assets/brand-logos/shoei.png',
+  agv: '/assets/brand-logos/agv.png',
+  arai: '/assets/brand-logos/arai.png',
+  hjc: '/assets/brand-logos/hjc.png',
+  shark: '/assets/brand-logos/shark.png',
+  schuberth: '/assets/brand-logos/schuberth.png',
+  alpinestars: '/assets/brand-logos/alpinestars.png',
+  dainese: '/assets/brand-logos/dainese.png',
+};
+
+export const HOME_CATEGORY_META = {
+  helmets: {
+    name: 'Шлемы',
+    description: 'Интегралы и open-face',
+    image: 'https://images.unsplash.com/photo-1645021081534-93ce573e3dce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+  jackets: {
+    name: 'Куртки',
+    description: 'Текстиль и кевлар',
+    image: 'https://images.unsplash.com/photo-1694852860772-ec8598c72c15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+  gloves: {
+    name: 'Перчатки',
+    description: 'Город и спорт',
+    image: 'https://images.unsplash.com/photo-1662707645694-36d3e81afd85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+  boots: {
+    name: 'Ботинки',
+    description: 'Город и туринг',
+    image: 'https://images.unsplash.com/photo-1693679117329-da630cfbf90c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+  protection: {
+    name: 'Защита',
+    description: 'Спина и локти',
+    image: 'https://images.unsplash.com/photo-1644435234001-ceb5f78330f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+  accessories: {
+    name: 'Аксессуары',
+    description: 'Визоры и интеркомы',
+    image: 'https://images.unsplash.com/photo-1719212752790-fb82dd11de88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+  },
+};
+
+export const DEFAULT_MARQUEE_PROMOS = ['Trade-In', 'Акция -15%', 'Новые поступления', 'Онлайн-заказ 24/7'];
+
+export function getBrandLogo(brandName) {
+  const normalized = String(brandName || '')
+    .toLowerCase()
+    .replace(/[^a-zа-я0-9]+/gi, '');
+  if (normalized.includes('shoei')) return BRAND_LOGOS.shoei;
+  if (normalized.includes('agv')) return BRAND_LOGOS.agv;
+  if (normalized.includes('arai')) return BRAND_LOGOS.arai;
+  if (normalized.includes('hjc')) return BRAND_LOGOS.hjc;
+  if (normalized.includes('shark')) return BRAND_LOGOS.shark;
+  if (normalized.includes('schuberth')) return BRAND_LOGOS.schuberth;
+  if (normalized.includes('alpinestars')) return BRAND_LOGOS.alpinestars;
+  if (normalized.includes('dainese')) return BRAND_LOGOS.dainese;
+  return null;
+}
+
+export function parseMarqueePromos(value) {
+  return String(value || '')
+    .split(/\r?\n/g)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Instagram, Twitter, Youtube, X, ArrowRight, Menu, Phone, User, Check, Plus, Minus, Trash2 } from 'lucide-react';
 import { createPageUrl, formatPrice } from './utils.js';
 import { useMotoStore } from './data/motoStore.jsx';
+import { PRIMARY_BUTTON_CLASS, SECONDARY_BUTTON_CLASS } from './data/siteTheme.js';
 
 export default function MotoLayout({ children }) {
   const location = useLocation();
@@ -415,14 +416,14 @@ export default function MotoLayout({ children }) {
               <button
                 type="button"
                 onClick={goCheckout}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded bg-[#54A0C5] text-sm font-semibold text-[#FAFAF9]"
+                className={`${PRIMARY_BUTTON_CLASS} h-12 w-full`}
               >
                 Оформить заказ <ArrowRight className="h-4 w-4" />
               </button>
               <button
                 type="button"
                 onClick={() => setCartOpen(false)}
-                className="h-10 w-full text-[13px] font-medium text-[#A0A0A5]"
+                className={`${SECONDARY_BUTTON_CLASS} h-10 w-full text-[13px] text-[#A0A0A5]`}
               >
                 Продолжить покупки
               </button>
@@ -486,7 +487,7 @@ export default function MotoLayout({ children }) {
                 type="button"
                 disabled={callbackSending || !callbackForm.name.trim() || !callbackForm.phone.trim()}
                 onClick={sendCallbackRequest}
-                className="inline-flex h-10 items-center gap-2 rounded-lg bg-[#54A0C5] px-4 text-sm font-medium text-[#FAFAF9] disabled:opacity-60"
+                className={`${PRIMARY_BUTTON_CLASS} h-10 px-4 py-0 disabled:opacity-60`}
               >
                 {callbackSending ? 'Отправка...' : 'Создать заявку'}
                 {!callbackSending ? <ArrowRight className="h-4 w-4" /> : null}

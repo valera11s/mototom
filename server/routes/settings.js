@@ -9,7 +9,12 @@ const DEFAULT_SETTINGS = [
   { key: 'phone_link', value: '+74951299077', description: 'Телефон для tel: ссылки' },
   { key: 'address', value: 'Москва, ул. Дубининская, д. 22', description: 'Адрес магазина' },
   { key: 'email', value: 'sales@mototom.ru', description: 'Email магазина' },
-  { key: 'working_hours', value: 'Пн-Пт: 10:00 - 20:00', description: 'Режим работы' }
+  { key: 'working_hours', value: 'Пн-Пт: 10:00 - 20:00', description: 'Режим работы' },
+  {
+    key: 'home_marquee_promos',
+    value: 'Trade-In\nАкция -15%\nНовые поступления\nОнлайн-заказ 24/7',
+    description: 'Промо-акции для бегущей строки на главной',
+  },
 ];
 
 async function ensureDefaults() {

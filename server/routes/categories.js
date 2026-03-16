@@ -3,6 +3,20 @@ import { pool } from '../index.js';
 
 const router = express.Router();
 
+let ensureCategoryMetaPromise = null;
+
+async function ensureCategoryMeta() {
+  if (!ensureCategoryMetaPromise) {
+    ensureCategoryMetaPromise = (async () => {
+      await pool.query(`
+        ALTER TABLE categories
+        ADD COLUMN IF NOT EXISTS has_sizes boolean NOT NULL DEFAULT true
+      `);
+    })();
+  }
+  await ensureCategoryMetaPromise;
+}
+
 function slugify(value) {
   const translitMap = {
     '\u0430': 'a',
@@ -56,6 +70,7 @@ function slugify(value) {
 // РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ РєР°С‚РµРіРѕСЂРёРё
 router.get('/', async (req, res) => {
   try {
+    await ensureCategoryMeta();
     const { parent_id, all } = req.query;
     let query = 'SELECT * FROM categories';
     const params = [];
@@ -92,13 +107,14 @@ router.get('/', async (req, res) => {
 // РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ РєР°С‚РµРіРѕСЂРёРё СЃ РёРµСЂР°СЂС…РёРµР№
 router.get('/tree', async (req, res) => {
   try {
+    await ensureCategoryMeta();
     const result = await pool.query(`
       WITH RECURSIVE category_tree AS (
-        SELECT id, name, parent_id, level, created_at
+        SELECT id, name, parent_id, level, created_at, has_sizes
         FROM categories
         WHERE parent_id IS NULL
         UNION ALL
-        SELECT c.id, c.name, c.parent_id, c.level, c.created_at
+        SELECT c.id, c.name, c.parent_id, c.level, c.created_at, c.has_sizes
         FROM categories c
         INNER JOIN category_tree ct ON c.parent_id = ct.id
       )
@@ -114,6 +130,7 @@ router.get('/tree', async (req, res) => {
 // РџРѕР»СѓС‡РёС‚СЊ РєР°С‚РµРіРѕСЂРёСЋ РїРѕ ID
 router.get('/:id', async (req, res) => {
   try {
+    await ensureCategoryMeta();
     const { id } = req.params;
     const result = await pool.query('SELECT * FROM categories WHERE id = $1', [id]);
     if (result.rows.length === 0) {
@@ -129,7 +146,8 @@ router.get('/:id', async (req, res) => {
 // РЎРѕР·РґР°С‚СЊ РєР°С‚РµРіРѕСЂРёСЋ
 router.post('/', async (req, res) => {
   try {
-    const { name, parent_id, level, product_name_prefix } = req.body;
+    await ensureCategoryMeta();
+    const { name, parent_id, level, product_name_prefix, has_sizes } = req.body;
     if (!name || !String(name).trim()) {
       return res.status(400).json({ error: 'Название категории обязательно' });
     }
@@ -150,16 +168,17 @@ router.post('/', async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO categories (name, slug, parent_id, level, product_name_prefix)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO categories (name, slug, parent_id, level, product_name_prefix, has_sizes)
+       VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (slug) DO UPDATE
        SET name = EXCLUDED.name,
            parent_id = EXCLUDED.parent_id,
            level = EXCLUDED.level,
            product_name_prefix = EXCLUDED.product_name_prefix,
+           has_sizes = EXCLUDED.has_sizes,
            updated_at = now()
        RETURNING *`,
-      [cleanName, slug, parent_id || null, resolvedLevel, product_name_prefix || null]
+      [cleanName, slug, parent_id || null, resolvedLevel, product_name_prefix || null, has_sizes !== false]
     );
 
     res.status(201).json(result.rows[0]);
@@ -172,8 +191,9 @@ router.post('/', async (req, res) => {
 // РћР±РЅРѕРІРёС‚СЊ РєР°С‚РµРіРѕСЂРёСЋ
 router.put('/:id', async (req, res) => {
   try {
+    await ensureCategoryMeta();
     const { id } = req.params;
-    const { name, parent_id, level, product_name_prefix } = req.body;
+    const { name, parent_id, level, product_name_prefix, has_sizes } = req.body;
     if (!name || !String(name).trim()) {
       return res.status(400).json({ error: 'Название категории обязательно' });
     }
@@ -200,10 +220,11 @@ router.put('/:id', async (req, res) => {
            parent_id = $3,
            level = $4,
            product_name_prefix = $5,
+           has_sizes = $6,
            updated_at = now()
-       WHERE id = $6
+       WHERE id = $7
        RETURNING *`,
-      [cleanName, slug, parent_id || null, resolvedLevel, product_name_prefix || null, id]
+      [cleanName, slug, parent_id || null, resolvedLevel, product_name_prefix || null, has_sizes !== false, id]
     );
     
     if (result.rows.length === 0) {

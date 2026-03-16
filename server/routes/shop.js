@@ -4,6 +4,7 @@ import { pool } from '../index.js';
 const router = express.Router();
 let ensureLookCategoryColumnPromise = null;
 let ensureProductArchiveColumnPromise = null;
+let ensureCategoryMetaPromise = null;
 
 async function ensureLookCategoryColumn() {
   if (!ensureLookCategoryColumnPromise) {
@@ -34,6 +35,16 @@ async function ensureProductArchiveColumn() {
     `);
   }
   await ensureProductArchiveColumnPromise;
+}
+
+async function ensureCategoryMetaColumn() {
+  if (!ensureCategoryMetaPromise) {
+    ensureCategoryMetaPromise = pool.query(`
+      ALTER TABLE categories
+      ADD COLUMN IF NOT EXISTS has_sizes boolean NOT NULL DEFAULT true
+    `);
+  }
+  await ensureCategoryMetaPromise;
 }
 
 function toNumber(value, fallback = 0) {
@@ -81,10 +92,11 @@ router.get('/bootstrap', async (_req, res) => {
   try {
     await ensureLookCategoryColumn();
     await ensureProductArchiveColumn();
-    const [categoriesResult, brandsResult, productsResult, looksResult, lookItemsResult, categoryImagesSetting] =
+    await ensureCategoryMetaColumn();
+    const [categoriesResult, brandsResult, productsResult, looksResult, lookItemsResult, categoryImagesSetting, settingsResult] =
       await Promise.all([
         pool.query(`
-          SELECT id, name, slug, parent_id, sort_order
+          SELECT id, name, slug, parent_id, sort_order, has_sizes
           FROM categories
           WHERE is_active = true
           ORDER BY sort_order ASC, name ASC
@@ -191,6 +203,11 @@ router.get('/bootstrap', async (_req, res) => {
           WHERE key = 'category_images'
           LIMIT 1
         `),
+        pool.query(`
+          SELECT key, value
+          FROM settings
+          WHERE key IN ('home_marquee_promos')
+        `),
       ]);
 
     const products = productsResult.rows.map(mapProductRow);
@@ -205,12 +222,18 @@ router.get('/bootstrap', async (_req, res) => {
       categoryImages = { byId: {}, byName: {} };
     }
 
+    const settings = {};
+    (settingsResult?.rows || []).forEach((row) => {
+      settings[row.key] = row.value;
+    });
+
     const categories = categoriesResult.rows.map((category) => {
       const byId = categoryImages?.byId?.[category.id];
       const byName = categoryImages?.byName?.[String(category.name || '').toLowerCase()];
       return {
         ...category,
         image: byId || byName || null,
+        has_sizes: category.has_sizes !== false,
       };
     });
 
@@ -244,6 +267,7 @@ router.get('/bootstrap', async (_req, res) => {
       brands: brandsResult.rows,
       products,
       sets,
+      settings,
     });
   } catch (error) {
     console.error('Shop bootstrap error:', error);

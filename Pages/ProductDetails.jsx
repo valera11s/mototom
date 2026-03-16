@@ -10,6 +10,7 @@ import Seo from '../src/components/Seo.jsx';
 import { Button } from '../Components/ui/button.jsx';
 import { Badge } from '../Components/ui/badge.jsx';
 import { Skeleton } from '../Components/ui/skeleton.jsx';
+import { PRIMARY_BUTTON_CLASS, PRODUCT_BADGE_CLASS } from '../src/data/siteTheme.js';
 
 function uniq(values) {
   return Array.from(new Set((values || []).filter(Boolean)));
@@ -195,6 +196,7 @@ export default function ProductDetails() {
   const lowStockUrgent = String(product.condition || '').toLowerCase() === 'new' && stockQty > 0 && stockQty < 3;
   const maxSelectableQty = stockQty > 0 ? stockQty : 99;
   const discount = product.original_price ? Math.round((1 - Number(product.price || 0) / Number(product.original_price || 1)) * 100) : 0;
+  const conditionIsUsed = String(product.condition || 'new').toLowerCase() === 'used';
 
   return (
     <div className="min-h-screen bg-[#0D0D0F] pb-14 text-[#FAFAF9]">
@@ -229,6 +231,11 @@ export default function ProductDetails() {
         <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} className="space-y-3">
           <div className="relative overflow-hidden rounded-xl border border-[#1E1E22] bg-[#16161A]">
             {discount > 0 ? <Badge className="absolute left-3 top-3 bg-[#54A0C5]">-{discount}%</Badge> : null}
+            <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${
+              conditionIsUsed ? PRODUCT_BADGE_CLASS.used : PRODUCT_BADGE_CLASS.new
+            }`}>
+              {conditionIsUsed ? 'Б/У' : 'Новый'}
+            </span>
             <img src={images[selectedImage]} alt={product.name} className="h-[340px] w-full object-cover sm:h-[460px] lg:h-[520px]" />
           </div>
           {images.length > 1 ? (
@@ -255,6 +262,9 @@ export default function ProductDetails() {
               <div className="inline-flex items-center gap-1 text-[#A0A0A5]"><Star className="h-4 w-4 fill-[#54A0C5] text-[#54A0C5]" />{Number(product.rating || 4.8).toFixed(1)}</div>
               <span className={`rounded-full px-2 py-0.5 text-xs ${isInStock ? 'bg-[#54A0C520] text-[#54A0C5]' : 'bg-[#F8717120] text-[#F87171]'}`}>
                 {isInStock ? `В наличии${stockQty ? `: ${stockQty}` : ''}` : 'Нет в наличии'}
+              </span>
+              <span className={`rounded-full px-2 py-0.5 text-xs ${conditionIsUsed ? PRODUCT_BADGE_CLASS.used : PRODUCT_BADGE_CLASS.new}`}>
+                {conditionIsUsed ? 'Б/У' : 'Новый'}
               </span>
             </div>
             {lowStockUrgent ? <p className="mt-2 text-xs font-medium text-[#F87171]">Успей заказать, осталось несколько штук</p> : null}
@@ -283,10 +293,10 @@ export default function ProductDetails() {
               type="button"
               disabled={!isInStock}
               onClick={handleAddToCart}
-              className={`inline-flex h-11 items-center gap-2 rounded-md px-6 text-sm font-medium transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60 ${
+              className={`${PRIMARY_BUTTON_CLASS} inline-flex h-11 px-6 py-0 text-sm font-medium transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-60 ${
                 justAdded
                   ? 'bg-[#32D583] text-[#0D0D0F] scale-[1.03]'
-                  : 'bg-[#54A0C5] text-[#FAFAF9] hover:bg-[#4a94b7]'
+                  : ''
               }`}
             >
               {justAdded ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
