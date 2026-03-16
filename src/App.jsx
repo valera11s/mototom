@@ -40,6 +40,7 @@ function AppRoutes() {
       <Route path={createPageUrl('OrderStatus')} element={<OrderStatus />} />
       <Route path={`${createPageUrl('ReadySet')}/:slug`} element={<ReadySet />} />
       <Route path={createPageUrl('About')} element={<About />} />
+      <Route path={createPageUrl('Delivery')} element={<Contacts />} />
       <Route path={createPageUrl('Contacts')} element={<Contacts />} />
       <Route path={`${createPageUrl('ProductDetails')}/:slug`} element={<ProductDetails />} />
       <Route path="*" element={<Navigate to={createPageUrl('Home')} replace />} />

@@ -2,11 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
   Headphones,
   RotateCcw,
-  Search,
   Send,
   ShieldCheck,
   ShoppingBag,
@@ -200,10 +197,10 @@ function mapProductCard(item) {
 
 function SectionHeader({ title, actionLabel, actionHref, className = '' }) {
   return (
-    <div className={`mb-5 flex items-center justify-between gap-4 md:mb-6 ${className}`}>
-      <h2 className="text-[26px] font-bold tracking-[-0.04em] text-[#FAFAF9] md:text-[32px]">{title}</h2>
+    <div className={`mb-5 flex items-center justify-between gap-4 md:mb-7 ${className}`}>
+      <h2 className="text-[24px] font-bold tracking-[-0.03em] text-[#FAFAF9] md:text-[28px]">{title}</h2>
       {actionLabel && actionHref ? (
-        <Link to={actionHref} className="inline-flex items-center gap-2 text-sm font-medium text-[#A0A0A5] transition-colors hover:text-[#FAFAF9]">
+        <Link to={actionHref} className="inline-flex items-center gap-2 text-[13px] font-medium text-[#A0A0A5] transition-colors hover:text-[#FAFAF9]">
           <span>{actionLabel}</span>
           <ArrowRight className="h-4 w-4" />
         </Link>
@@ -233,7 +230,7 @@ function ThumbStrip({ items, activeIndex, onChange, className = '' }) {
 function DesktopHero({ slide, index, setIndex }) {
   return (
     <section className="relative overflow-hidden border-b border-[#1E1E22]">
-      <div className="relative h-[620px]">
+      <div className="relative h-[600px]">
         {HERO_SLIDES.map((item, idx) => (
           <img
             key={item.image}
@@ -242,21 +239,19 @@ function DesktopHero({ slide, index, setIndex }) {
             className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === index ? 'opacity-100' : 'opacity-0'}`}
           />
         ))}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,15,0.94)_0%,rgba(13,13,15,0.72)_38%,rgba(13,13,15,0.22)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(84,160,197,0.16),transparent_30%)]" />
-
-        <div className="relative mx-auto flex h-full w-full max-w-[1440px] items-end px-6 pb-10 md:px-10 xl:px-20">
-          <div className="max-w-[620px] pb-6">
-            <div className="inline-flex rounded border border-[#54A0C560] bg-[#54A0C518] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,15,0.9)_0%,rgba(13,13,15,0.6)_52%,rgba(13,13,15,0.8)_100%)]" />
+        <div className="relative mx-auto h-full w-full max-w-[1440px]">
+          <div className="absolute left-20 top-40 flex w-[600px] flex-col gap-6">
+            <div className="inline-flex w-fit rounded-[4px] border border-[#54A0C560] bg-[#54A0C520] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">
               {slide.tag}
             </div>
-            <h1 className="mt-6 whitespace-pre-line text-[54px] font-bold leading-[0.94] tracking-[-0.06em] text-[#FAFAF9]">
+            <h1 className="whitespace-pre-line text-[48px] font-bold leading-[1.1] tracking-[-0.04em] text-[#FAFAF9]">
               {slide.title}
             </h1>
-            <p className="mt-5 max-w-[520px] text-[16px] leading-7 text-[#A0A0A5]">
+            <p className="max-w-[480px] text-[16px] leading-6 text-[#A0A0A5]">
               {slide.subtitle}
             </p>
-            <div className="mt-8 flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link to={createPageUrl('Shop')} className={PRIMARY_BUTTON_CLASS}>
                 <span>{slide.primary}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -267,23 +262,20 @@ function DesktopHero({ slide, index, setIndex }) {
             </div>
           </div>
 
-          <div className="absolute bottom-10 right-6 flex items-center gap-2 md:right-10 xl:right-20">
-            <button
-              type="button"
-              onClick={() => setIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#2A2A2E] bg-[#111114]/80 text-[#FAFAF9]"
-              aria-label="Предыдущий слайд"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setIndex((prev) => (prev + 1) % HERO_SLIDES.length)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#2A2A2E] bg-[#111114]/80 text-[#FAFAF9]"
-              aria-label="Следующий слайд"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
+          <div className="absolute bottom-[47px] left-20 flex items-center gap-2">
+            {HERO_SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setIndex(idx)}
+                aria-label={`Слайд ${idx + 1}`}
+                className={`h-[3px] rounded-[2px] ${idx === index ? 'bg-[#54A0C5]' : 'bg-[#FAFAF930]'}`}
+                style={{ width: 24 }}
+              />
+            ))}
+          </div>
+          <div className="absolute bottom-[41px] right-20 text-[12px] font-medium tracking-[0.16em] text-[#A0A0A5]">
+            {String(index + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
           </div>
         </div>
       </div>
@@ -297,17 +289,18 @@ function MobileHero({ slide, index }) {
       <div className="relative h-[520px]">
         <img src={slide.image} alt={slide.title} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,13,15,0.76)_0%,rgba(13,13,15,0.38)_30%,rgba(13,13,15,0.94)_100%)]" />
-        <div className="relative flex h-full flex-col justify-end px-4 pb-6">
-          <div className="inline-flex w-fit rounded border border-[#54A0C560] bg-[#54A0C518] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">
+        <div className="relative h-full">
+          <div className="absolute left-6 top-[138px] flex w-[300px] flex-col gap-[18px]">
+          <div className="inline-flex w-fit rounded-[4px] border border-[#54A0C560] bg-[#54A0C518] px-[10px] py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">
             {slide.tag}
           </div>
-          <h1 className="mt-4 whitespace-pre-line text-[34px] font-bold leading-[1.02] tracking-[-0.05em] text-[#FAFAF9]">
+          <h1 className="whitespace-pre-line text-[34px] font-bold leading-[1.1] tracking-[-0.04em] text-[#FAFAF9]">
             {slide.title}
           </h1>
-          <p className="mt-4 text-[14px] leading-6 text-[#B1B1B7]">
+          <p className="text-[14px] leading-[1.5] text-[#A0A0A5]">
             {slide.subtitle}
           </p>
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="flex flex-col gap-3">
             <Link to={createPageUrl('Shop')} className={`${PRIMARY_BUTTON_CLASS} h-12`}>
               <span>{slide.primary}</span>
               <ArrowRight className="h-4 w-4" />
@@ -316,10 +309,14 @@ function MobileHero({ slide, index }) {
               {slide.secondary}
             </Link>
           </div>
-          <div className="mt-5 flex items-center gap-2">
+          </div>
+          <div className="absolute bottom-[31px] left-6 flex items-center gap-2">
             {HERO_SLIDES.map((_, idx) => (
-              <span key={idx} className={`h-[3px] rounded-full transition-all ${idx === index ? 'w-10 bg-[#54A0C5]' : 'w-4 bg-[#3A3A3F]'}`} />
+              <span key={idx} className={`h-[3px] w-6 rounded-[2px] ${idx === index ? 'bg-[#54A0C5]' : 'bg-[#FAFAF930]'}`} />
             ))}
+          </div>
+          <div className="absolute bottom-[26px] right-6 text-[12px] font-medium tracking-[0.16em] text-[#A0A0A5]">
+            {String(index + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
           </div>
         </div>
       </div>
@@ -329,23 +326,22 @@ function MobileHero({ slide, index }) {
 
 function MarqueeBanner({ promos }) {
   return (
-    <section className="overflow-hidden border-b border-[#1E1E22] bg-[#0F1013]">
-      <div className="home-marquee-track flex min-w-[980px] items-center gap-8 whitespace-nowrap px-6 py-4 md:py-5">
+    <section className="overflow-hidden border-y border-[#1E1E22] bg-[#0A0A0C]">
+      <div className="home-marquee-track flex min-w-max items-center gap-0 whitespace-nowrap py-[19px] md:py-[19px]">
         {[0, 1].map((loop) => (
-          <React.Fragment key={loop}>
-            <div className="flex items-center gap-8">
-              <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-8 w-auto object-contain opacity-95 md:h-10" />
-              <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-8 w-auto object-contain opacity-95 md:h-10" />
-              <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-8 w-auto object-contain opacity-95 md:h-10" />
-            </div>
-            <div className="flex items-center gap-3">
+          <div key={loop} className="flex shrink-0 items-center">
+            <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-[24px] w-[660px] shrink-0 object-contain md:h-[30px] md:w-[825px]" />
+            <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-[24px] w-[660px] shrink-0 object-contain md:h-[30px] md:w-[825px]" />
+            <img src="/assets/brand-strip-combined.png" alt="Бренды" className="h-[24px] w-[660px] shrink-0 object-contain md:h-[30px] md:w-[825px]" />
+            <span className="block h-px w-[36px] shrink-0" />
+            <div className="flex shrink-0 items-center gap-3 pl-0">
               {promos.map((promo, idx) => (
-                <span key={`${promo}-${idx}`} className="rounded-full border border-[#2A2A2E] bg-[#15161A] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D2D2D7] md:text-xs">
+                <span key={`${promo}-${idx}-${loop}`} className="inline-flex h-[30px] items-center rounded-full border border-[#1F2A36] bg-[#10141A] px-[14px] text-[11px] font-bold uppercase tracking-[0.12em] text-[#DDF6FF] md:text-[12px]">
                   {promo}
                 </span>
               ))}
             </div>
-          </React.Fragment>
+          </div>
         ))}
       </div>
     </section>
@@ -355,22 +351,19 @@ function MarqueeBanner({ promos }) {
 function DesktopLookCard({ look }) {
   const slide = look.slides[0] || {};
   return (
-    <Link to={createPageUrl('LooksCatalog')} className="group overflow-hidden rounded-[14px] border border-[#1E1E22] bg-[#16161A]">
-      <div className="relative h-[360px] overflow-hidden">
+    <Link to={createPageUrl('LooksCatalog')} className="group overflow-hidden rounded-[8px] border border-[#1E1E22] bg-[#16161A]">
+      <div className="relative h-[320px] overflow-hidden">
         <img src={slide.image} alt={look.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0.48)_100%)]" />
       </div>
-      <div className="space-y-3 p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 className="text-[22px] font-semibold text-[#FAFAF9]">{look.name}</h3>
-            <p className="mt-1 text-sm text-[#A0A0A5]">{slide.description}</p>
-          </div>
-          <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-[#A0A0A5]" />
+      <div className="space-y-2 p-4">
+        <div>
+          <h3 className="text-[18px] font-semibold text-[#FAFAF9]">{look.name}</h3>
+          <p className="mt-1 text-[13px] text-[#A0A0A5]">{slide.description}</p>
         </div>
         <div className="flex items-end justify-between gap-4">
-          <p className="text-[24px] font-bold tracking-[-0.04em] text-[#FAFAF9]">{slide.priceText}</p>
-          <p className="text-sm text-[#A0A0A5]">{slide.countText}</p>
+          <p className="text-[18px] font-bold tracking-[-0.03em] text-[#FAFAF9]">{slide.priceText}</p>
+          <p className="text-[13px] text-[#A0A0A5]">{slide.countText}</p>
         </div>
       </div>
     </Link>
@@ -433,7 +426,7 @@ function DesktopProductCard({ item, badgeText, navigate, addToCart, getCartQuant
       onClick={() => navigate(createProductUrl({ id: item.productId, slug: item.slug, name: item.name }))}
       className="group cursor-pointer overflow-hidden rounded-[12px] border border-[#1E1E22] bg-[#16161A]"
     >
-      <div className="relative h-[260px] overflow-hidden">
+      <div className="relative h-[320px] overflow-hidden">
         <img src={item.image} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
         {badgeText ? (
           <span className="absolute left-3 top-3 rounded bg-[#54A0C5] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#FAFAF9]">
@@ -533,43 +526,54 @@ function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIn
 
 function DesktopReviews({ review }) {
   return (
-    <section className="bg-[#F7F7F3] px-6 py-16 text-[#111114] md:px-10 xl:px-20">
+    <section className="bg-[#0D0D0F] px-6 py-14 text-[#FAFAF9] md:px-10 xl:px-20">
       <div className="mx-auto max-w-[1440px]">
-        <h2 className="text-center text-[48px] font-bold tracking-[-0.05em] text-[#232326]">ЧТО ГОВОРЯТ НАШИ ПОКУПАТЕЛИ</h2>
-        <div className="mt-10 grid grid-cols-[260px_1fr] gap-8">
-          <div className="rounded-[16px] bg-[#F3F3EF] p-8 text-center shadow-[0_12px_40px_rgba(17,17,20,0.06)]">
-            <p className="text-[34px] font-bold tracking-[-0.04em]">5 из 5</p>
-            <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
-              {Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-6 w-6 fill-current" />)}
+        <h2 className="text-center text-[36px] font-extrabold uppercase tracking-[0.12em] text-[#FFFFFF]">ЧТО ГОВОРЯТ НАШИ ПОКУПАТЕЛИ</h2>
+        <div className="mt-12 grid grid-cols-[260px_1fr] gap-6">
+          <div className="space-y-4">
+            <div className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-5 text-center">
+              <p className="text-[28px] font-bold tracking-[-0.03em] text-[#FAFAF9]">5 из 5</p>
+              <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
+                {Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-5 w-5 fill-current" />)}
+              </div>
+              <p className="mt-4 text-sm text-[#A0A0A5]">На основе отзывов Avito</p>
             </div>
-            <p className="mt-5 text-sm text-[#6B6B70]">На основе отзывов Avito и Яндекс Карт</p>
-            <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="mt-8 inline-flex rounded-[10px] border border-[#D8D8D1] px-5 py-3 text-sm font-medium text-[#232326]">
-              Оставить отзыв
-            </a>
+            <div className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-5 text-center">
+              <p className="text-[28px] font-bold tracking-[-0.03em] text-[#FAFAF9]">5.0</p>
+              <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
+                {Array.from({ length: 5 }).map((_, idx) => <Star key={`y-${idx}`} className="h-5 w-5 fill-current" />)}
+              </div>
+              <p className="mt-4 text-sm text-[#A0A0A5]">Яндекс Карты</p>
+            </div>
           </div>
           <div>
-            <article className="rounded-[16px] border border-[#E4E4DE] bg-white p-6 shadow-[0_18px_48px_rgba(17,17,20,0.08)]">
+            <article className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-6">
               <div className="flex items-start gap-4">
-                <img src={review.avatarUrl} alt={review.name} className="h-16 w-16 rounded-full object-cover" />
+                <img src={review.avatarUrl} alt={review.name} className="h-14 w-14 rounded-full object-cover" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[20px] font-semibold text-[#232326]">{review.name}</p>
-                  <div className="mt-1 flex items-center gap-1 text-[#FFB800]">
+                  <p className="text-[18px] font-semibold text-[#FAFAF9]">{review.name}</p>
+                  <div className="mt-2 flex items-center gap-1 text-[#FFB800]">
                     {Array.from({ length: review.rating || 5 }).map((_, idx) => <Star key={idx} className="h-4 w-4 fill-current" />)}
                   </div>
-                  <p className="mt-4 text-[20px] font-semibold tracking-[-0.03em] text-[#232326]">{review.product}</p>
-                  <p className="mt-5 max-w-[720px] text-[18px] leading-8 text-[#45454A]">{review.text}</p>
+                  <p className="mt-4 text-[20px] font-semibold tracking-[-0.03em] text-[#FAFAF9]">{review.product}</p>
+                  <p className="mt-5 max-w-[720px] text-[16px] leading-8 text-[#A0A0A5]">{review.text}</p>
                 </div>
               </div>
-              <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#ECECE7] pt-5">
-                <a href={review.reviewUrl || AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="text-sm font-medium text-[#232326] underline underline-offset-4">Отзыв Avito</a>
-                <div className="flex items-center gap-4 text-sm text-[#6B6B70]">
-                  <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#F7F7F3] px-4 py-2">
-                    <span className="font-semibold text-[#232326]">5.0</span>
-                    <span>Яндекс</span>
-                  </a>
-                </div>
+              <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#26262A] pt-5">
+                <a href={review.reviewUrl || AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="text-sm font-medium text-[#FAFAF9] underline underline-offset-4">Отзыв Avito</a>
+                <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#111114] px-4 py-2 text-sm text-[#D4D4D8]">
+                  <span className="font-semibold text-[#FAFAF9]">5.0</span>
+                  <span>Яндекс</span>
+                </a>
               </div>
             </article>
+            <div className="mt-4 flex items-center gap-4">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">‹</div>
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">›</div>
+              <div className="h-[3px] flex-1 rounded-full bg-[#2A2A2E]">
+                <div className="h-full w-[18%] rounded-full bg-[#54A0C5]" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -618,40 +622,42 @@ function MobileReviews({ review }) {
 }
 function TelegramSection() {
   return (
-    <section className="px-6 py-16 md:px-10 xl:px-20">
-      <div className="mx-auto grid max-w-[1440px] gap-8 rounded-[20px] border border-[#1E1E22] bg-[#111114] p-6 md:grid-cols-[1fr_520px] md:items-center md:p-10">
-        <div className="max-w-[520px]">
-          <h2 className="text-[36px] font-bold uppercase leading-[1.05] tracking-[-0.05em] text-[#FAFAF9] md:text-[56px]">
-            Хотите узнавать\nо новых поступлениях\nраньше всех?
-          </h2>
-          <p className="mt-5 text-[16px] leading-8 text-[#A0A0A5]">
-            В Telegram-канале рассказываем о новых поступлениях, делимся новостями и показываем редкие позиции раньше публикации в каталоге.
-          </p>
-          <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className={`${PRIMARY_BUTTON_CLASS} mt-8`}>
-            Подписаться на Telegram
-          </a>
-        </div>
-        <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className="overflow-hidden rounded-[20px] border border-[#2A2A2E] bg-[#17171A]">
-          <div className="flex items-center justify-between border-b border-[#2A2A2E] px-5 py-4">
-            <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-full bg-black" />
-              <div>
-                <p className="font-semibold text-[#FAFAF9]">Prizrak.shop</p>
-                <p className="text-xs text-[#7E7E84]">Telegram post preview</p>
+    <section className="px-6 py-14 md:px-10 xl:px-20">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="rounded-[12px] border border-[#1E1E22] bg-[#111114] p-6 md:flex md:items-center md:gap-8 md:px-9 md:py-8">
+          <div className="flex-1">
+            <h2 className="text-[22px] font-extrabold uppercase leading-[1.3] tracking-[-0.02em] text-[#FFFFFF]">
+              ЖЕЛАЕТЕ УЗНАВАТЬ{'\n'}О НОВЫХ ПОСТУПЛЕНИЯХ{'\n'}РАНЬШЕ ВСЕХ?
+            </h2>
+            <p className="mt-4 max-w-[420px] text-[13px] leading-[1.5] text-[#A0A0A5]">
+              В Telegram-канале рассказываем о новых поступлениях и делимся новостями
+            </p>
+            <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex h-11 items-center justify-center rounded-[8px] border border-[#3A3A3E] px-6 text-[14px] font-medium text-[#FAFAF9]">
+              Подписаться на Telegram
+            </a>
+          </div>
+          <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className="mt-6 block w-full overflow-hidden rounded-[12px] border border-[#2A2A2E] bg-[#222226] md:mt-0 md:w-[320px]">
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-black" />
+                <div>
+                  <p className="font-semibold text-[#FAFAF9]">Prizrak.shop</p>
+                  <p className="text-xs text-[#7E7E84]">Telegram post preview</p>
+                </div>
+              </div>
+              <Send className="h-5 w-5 text-[#54A0C5]" />
+            </div>
+            <img src={TELEGRAM_PREVIEW_IMAGE} alt="Telegram preview" className="h-[200px] w-full object-cover" />
+            <div className="space-y-4 px-4 py-4">
+              <p className="text-[15px] leading-7 text-[#FAFAF9]">Скоро можно будет выгулять новые перчатки и куртку в пути. Шлем и очки придется доставать самостоятельно.</p>
+              <p className="text-[#54A0C5]">#новинки</p>
+              <div className="flex items-center justify-between text-sm text-[#8D8D93]">
+                <span>t.me/prizrakV2/449</span>
+                <span>2.64K просмотров</span>
               </div>
             </div>
-            <Send className="h-5 w-5 text-[#54A0C5]" />
-          </div>
-          <img src={TELEGRAM_PREVIEW_IMAGE} alt="Telegram preview" className="h-[280px] w-full object-cover" />
-          <div className="space-y-4 px-5 py-5">
-            <p className="text-[16px] leading-8 text-[#FAFAF9]">Скоро можно будет выгулять новые перчатки и куртку в пути. Шлем и очки придется доставать самостоятельно.</p>
-            <p className="text-[#54A0C5]">#новинки</p>
-            <div className="flex items-center justify-between text-sm text-[#8D8D93]">
-              <span>t.me/prizrakV2/449</span>
-              <span>2.64K просмотров</span>
-            </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </div>
     </section>
   );

@@ -1,8 +1,8 @@
 export const PRIMARY_BUTTON_CLASS =
-  'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(90deg,#4B8BAE_0%,#54A0C5_72%,#6EB6D5_100%)] px-5 py-3 text-sm font-medium text-[#FAFAF9] shadow-[0_10px_30px_rgba(84,160,197,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(84,160,197,0.22)]';
+  'inline-flex items-center justify-center gap-2 rounded-[4px] bg-[linear-gradient(90deg,#7DDCFF_0%,#54A0C5_50%,#315F8C_100%)] px-5 py-3 text-sm font-semibold text-[#FAFAF9] transition-colors duration-200 hover:brightness-[1.03]';
 
 export const SECONDARY_BUTTON_CLASS =
-  'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#17171B] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors duration-200 hover:bg-[#1B1B20]';
+  'inline-flex items-center justify-center gap-2 rounded-[4px] bg-[linear-gradient(90deg,#182027_0%,#12171D_100%)] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors duration-200 hover:bg-[#151A20]';
 
 export const PRODUCT_BADGE_CLASS = {
   new: 'bg-[#1C4F72] text-[#E7F6FF]',
