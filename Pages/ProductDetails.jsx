@@ -209,12 +209,12 @@ export default function ProductDetails() {
       />
       <div className="border-b border-[#1E1E22] bg-[#111114]">
         <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-4 py-4 text-sm md:px-8">
-          <div className="flex items-center gap-2 text-[#6B6B70]">
+          <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-1 text-[#6B6B70]">
             <Link to={createPageUrl('Home')} className="hover:text-[#FAFAF9]">Главная</Link>
             <ChevronRight className="h-4 w-4" />
             <Link to={createPageUrl('Shop')} className="hover:text-[#FAFAF9]">Каталог</Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="max-w-[360px] truncate text-[#A0A0A5]">{product.name}</span>
+            <span className="min-w-0 max-w-full break-words whitespace-normal text-[#A0A0A5]">{product.name}</span>
           </div>
           <button
             type="button"
