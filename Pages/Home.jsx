@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   Headphones,
   RotateCcw,
   Send,
@@ -133,6 +135,24 @@ const HOME_STYLES = `
 .home-thumbs { scrollbar-width: none; -ms-overflow-style: none; }
 `;
 
+function InlineSliderDots({ count, activeIndex = 0, accent = '#54A0C5', muted = '#6B6B70', className = '' }) {
+  const safeCount = Math.max(1, Number(count || 1));
+  return (
+    <div className={`flex items-center gap-1.5 ${className}`}>
+      {Array.from({ length: Math.min(safeCount, 3) }).map((_, idx) => (
+        <span
+          key={idx}
+          className="h-1 rounded-[2px]"
+          style={{
+            width: idx === activeIndex ? 16 : 4,
+            backgroundColor: idx === activeIndex ? accent : muted,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function normalizeCategoryName(name) {
   const value = String(name || '').trim().toLowerCase();
   if (value.includes('шлем')) return 'helmets';
@@ -240,8 +260,8 @@ function DesktopHero({ slide, index, setIndex }) {
           />
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,13,15,0.9)_0%,rgba(13,13,15,0.6)_52%,rgba(13,13,15,0.8)_100%)]" />
-        <div className="relative mx-auto h-full w-full max-w-[1440px]">
-          <div className="absolute left-20 top-40 flex w-[600px] flex-col gap-6">
+        <div className="relative h-full w-full px-6 md:px-10 xl:px-20">
+          <div className="absolute left-6 top-40 flex w-[600px] max-w-[calc(100vw-3rem)] flex-col gap-6 md:left-10 xl:left-20 xl:max-w-[600px]">
             <div className="inline-flex w-fit rounded-[4px] border border-[#54A0C560] bg-[#54A0C520] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">
               {slide.tag}
             </div>
@@ -262,7 +282,7 @@ function DesktopHero({ slide, index, setIndex }) {
             </div>
           </div>
 
-          <div className="absolute bottom-[47px] left-20 flex items-center gap-2">
+          <div className="absolute bottom-[47px] left-6 flex items-center gap-2 md:left-10 xl:left-20">
             {HERO_SLIDES.map((_, idx) => (
               <button
                 key={idx}
@@ -274,7 +294,7 @@ function DesktopHero({ slide, index, setIndex }) {
               />
             ))}
           </div>
-          <div className="absolute bottom-[41px] right-20 text-[12px] font-medium tracking-[0.16em] text-[#A0A0A5]">
+          <div className="absolute bottom-[41px] right-6 text-[12px] font-medium tracking-[0.16em] text-[#A0A0A5] md:right-10 xl:right-20">
             {String(index + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
           </div>
         </div>
@@ -301,11 +321,11 @@ function MobileHero({ slide, index }) {
             {slide.subtitle}
           </p>
           <div className="flex flex-col gap-3">
-            <Link to={createPageUrl('Shop')} className={`${PRIMARY_BUTTON_CLASS} h-12`}>
+            <Link to={createPageUrl('Shop')} className={`${PRIMARY_BUTTON_CLASS} h-11 self-start px-5 py-0 text-[14px]`}>
               <span>{slide.primary}</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to={slide.secondaryHref} className={`${SECONDARY_BUTTON_CLASS} h-11`}>
+            <Link to={slide.secondaryHref} className={`${SECONDARY_BUTTON_CLASS} h-11 self-start px-5 py-0 text-[14px]`}>
               {slide.secondary}
             </Link>
           </div>
@@ -355,15 +375,16 @@ function DesktopLookCard({ look }) {
       <div className="relative h-[320px] overflow-hidden">
         <img src={slide.image} alt={look.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0.48)_100%)]" />
+        <InlineSliderDots count={look.slides?.length || 1} className="absolute bottom-4 left-4" />
       </div>
       <div className="space-y-2 p-4">
         <div>
           <h3 className="text-[18px] font-semibold text-[#FAFAF9]">{look.name}</h3>
           <p className="mt-1 text-[13px] text-[#A0A0A5]">{slide.description}</p>
         </div>
-        <div className="flex items-end justify-between gap-4">
-          <p className="text-[18px] font-bold tracking-[-0.03em] text-[#FAFAF9]">{slide.priceText}</p>
-          <p className="text-[13px] text-[#A0A0A5]">{slide.countText}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-[13px] font-semibold text-[#54A0C5]">{slide.priceText}</p>
+          <p className="text-[13px] font-semibold text-[#54A0C5]">{slide.countText}</p>
         </div>
       </div>
     </Link>
@@ -382,7 +403,7 @@ function MobileReadyLook({ looks, activeIndex, onChange }) {
 
   return (
     <div className="rounded-xl border border-[#1E1E22] bg-[#16161A]">
-      <div className="relative h-[260px] overflow-hidden rounded-t-xl">
+      <div className="relative h-[340px] overflow-hidden rounded-t-xl">
         <img src={slide.image} alt={currentLook.name} className="h-full w-full object-cover" />
         <div className="absolute bottom-3 left-3 rounded-full bg-[#0D0D0FCC] px-3 py-1 text-[11px] font-semibold text-[#FAFAF9]">
           {activeIndex + 1} / {looks.length}
@@ -396,8 +417,8 @@ function MobileReadyLook({ looks, activeIndex, onChange }) {
           </div>
         </div>
         <div className="flex items-center justify-between gap-4">
-          <p className="text-[22px] font-bold tracking-[-0.03em] text-[#FAFAF9]">{slide.priceText}</p>
-          <p className="text-xs text-[#A0A0A5]">{slide.countText}</p>
+          <p className="text-[13px] font-semibold text-[#54A0C5]">{slide.priceText}</p>
+          <p className="text-[13px] font-semibold text-[#54A0C5]">{slide.countText}</p>
         </div>
         <div className="relative">
           <ThumbStrip items={thumbItems} activeIndex={activeIndex} onChange={onChange} />
@@ -423,7 +444,7 @@ function CategoryCard({ item, compact = false }) {
     </Link>
   );
 }
-function DesktopProductCard({ item, badgeText, navigate, addToCart, getCartQuantity, getMaxAllowedQty }) {
+function DesktopProductCard({ item, navigate, addToCart, getCartQuantity, getMaxAllowedQty }) {
   const condition = getConditionMeta(item.condition);
   const cartQty = getCartQuantity(item.productId, null);
   const maxAllowed = getMaxAllowedQty(item.productId);
@@ -436,11 +457,6 @@ function DesktopProductCard({ item, badgeText, navigate, addToCart, getCartQuant
     >
       <div className="relative h-[320px] overflow-hidden">
         <img src={item.image} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-        {badgeText ? (
-          <span className="absolute left-3 top-3 rounded bg-[#54A0C5] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#FAFAF9]">
-            {badgeText}
-          </span>
-        ) : null}
         <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${condition.className}`}>
           {condition.label}
         </span>
@@ -471,7 +487,7 @@ function DesktopProductCard({ item, badgeText, navigate, addToCart, getCartQuant
   );
 }
 
-function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIndex, onChange, badgeText, navigate, addToCart, getCartQuantity, getMaxAllowedQty }) {
+function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIndex, onChange, navigate, addToCart, getCartQuantity, getMaxAllowedQty }) {
   const item = items[activeIndex] || items[0];
   if (!item) return null;
   const condition = getConditionMeta(item.condition);
@@ -493,11 +509,6 @@ function MobileProductShowcase({ title, actionLabel, actionHref, items, activeIn
             className="h-full w-full object-cover"
             onClick={() => navigate(createProductUrl({ id: item.productId, slug: item.slug, name: item.name }))}
           />
-          {badgeText ? (
-            <span className="absolute left-3 top-3 rounded bg-[#54A0C5] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#FAFAF9]">
-              {badgeText}
-            </span>
-          ) : null}
           <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${condition.className}`}>
             {condition.label}
           </span>
@@ -625,6 +636,17 @@ function MobileReviews({ review }) {
         </div>
         <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex text-sm font-medium text-[#FAFAF9] underline underline-offset-4">Смотреть все отзывы</a>
       </article>
+      <div className="flex items-center gap-4">
+        <button type="button" aria-label="Предыдущий отзыв" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <button type="button" aria-label="Следующий отзыв" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3A3A3E] text-[#FAFAF9]">
+          <ChevronRight className="h-4 w-4" />
+        </button>
+        <div className="h-[3px] flex-1 rounded-full bg-[#2A2A2E]">
+          <div className="h-full w-[42%] rounded-full bg-[#FFB800]" />
+        </div>
+      </div>
     </section>
   );
 }
@@ -805,7 +827,6 @@ export default function Home() {
               <DesktopProductCard
                 key={item.productId}
                 item={item}
-                badgeText={idx === 0 ? 'Хит' : idx === 2 ? 'Новинка' : ''}
                 navigate={navigate}
                 addToCart={addToCart}
                 getCartQuantity={getCartQuantity}
@@ -823,7 +844,6 @@ export default function Home() {
         items={fallbackFeatured.helmets}
         activeIndex={helmetIndex}
         onChange={setHelmetIndex}
-        badgeText="Хит"
         navigate={navigate}
         addToCart={addToCart}
         getCartQuantity={getCartQuantity}
@@ -838,7 +858,6 @@ export default function Home() {
               <DesktopProductCard
                 key={item.productId}
                 item={item}
-                badgeText={idx === 0 ? 'Хит продаж' : idx === 1 ? 'Новинка' : ''}
                 navigate={navigate}
                 addToCart={addToCart}
                 getCartQuantity={getCartQuantity}
@@ -856,7 +875,6 @@ export default function Home() {
         items={fallbackFeatured.jackets}
         activeIndex={jacketIndex}
         onChange={setJacketIndex}
-        badgeText="Хит продаж"
         navigate={navigate}
         addToCart={addToCart}
         getCartQuantity={getCartQuantity}
