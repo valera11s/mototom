@@ -203,7 +203,15 @@ export default function MotoLayout({ children }) {
       <footer id="footer" className="bg-[#0A0A0C] px-4 pb-8 pt-12 md:px-6 xl:px-6">
         <div className="mx-auto max-w-[1440px]">
           <div className="bg-[radial-gradient(circle_at_50%_15%,rgba(84,160,197,0.12),rgba(84,160,197,0)_45%)] px-0 pb-8 pt-6">
-            <div className="overflow-hidden text-[66px] font-black leading-none tracking-[-0.08em] text-transparent [background:linear-gradient(90deg,#BFEFFF_0%,#54A0C5_48%,#2F5E84_100%)] [background-clip:text] [-webkit-background-clip:text] md:text-[140px] xl:text-[252px]">
+            <div
+              className="overflow-hidden text-center text-[66px] font-black leading-none tracking-[-0.08em] text-transparent bg-clip-text md:text-[140px] xl:text-[252px]"
+              style={{
+                backgroundImage: 'linear-gradient(90deg,#BFEFFF 0%,#54A0C5 48%,#2F5E84 100%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               MOTOTOM
             </div>
 

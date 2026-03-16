@@ -370,20 +370,28 @@ function DesktopLookCard({ look }) {
   );
 }
 
-function MobileReadyLook({ look, activeIndex, onChange }) {
-  const slide = look.slides[activeIndex] || look.slides[0];
+function MobileReadyLook({ looks, activeIndex, onChange }) {
+  const currentLook = looks[activeIndex] || looks[0];
+  const slide = currentLook?.slides?.[0];
+  if (!currentLook || !slide) return null;
+
+  const thumbItems = looks.map((look) => ({
+    image: look.slides?.[0]?.image,
+    name: look.name,
+  })).filter((item) => item.image);
+
   return (
     <div className="rounded-xl border border-[#1E1E22] bg-[#16161A]">
       <div className="relative h-[260px] overflow-hidden rounded-t-xl">
-        <img src={slide.image} alt={look.name} className="h-full w-full object-cover" />
+        <img src={slide.image} alt={currentLook.name} className="h-full w-full object-cover" />
         <div className="absolute bottom-3 left-3 rounded-full bg-[#0D0D0FCC] px-3 py-1 text-[11px] font-semibold text-[#FAFAF9]">
-          {activeIndex + 1} / {look.slides.length}
+          {activeIndex + 1} / {looks.length}
         </div>
       </div>
       <div className="space-y-3 p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-lg font-semibold text-[#FAFAF9]">{look.name}</p>
+            <p className="text-lg font-semibold text-[#FAFAF9]">{currentLook.name}</p>
             <p className="mt-1 text-sm text-[#A0A0A5]">{slide.description}</p>
           </div>
         </div>
@@ -392,7 +400,7 @@ function MobileReadyLook({ look, activeIndex, onChange }) {
           <p className="text-xs text-[#A0A0A5]">{slide.countText}</p>
         </div>
         <div className="relative">
-          <ThumbStrip items={look.slides} activeIndex={activeIndex} onChange={onChange} />
+          <ThumbStrip items={thumbItems} activeIndex={activeIndex} onChange={onChange} />
         </div>
       </div>
     </div>
@@ -584,23 +592,23 @@ function DesktopReviews({ review }) {
 function MobileReviews({ review }) {
   return (
     <section className="space-y-4 px-4 py-8 md:hidden">
-      <div className="grid grid-cols-2 gap-3">
-        <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
+      <div className="grid grid-cols-2 gap-2">
+        <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="min-w-0 rounded-xl border border-[#1E1E22] bg-[#16161A] p-3">
           <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">Avito</p>
           <div className="mt-2 flex items-center gap-2 text-[#FAFAF9]">
-            <span className="text-[22px] font-bold">5.0</span>
-            <div className="flex gap-1 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-4 w-4 fill-current" />)}</div>
+            <span className="text-[20px] font-bold">5.0</span>
+            <div className="flex gap-0.5 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
           </div>
         </a>
-        <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
+        <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="min-w-0 rounded-xl border border-[#1E1E22] bg-[#16161A] p-3">
           <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">Яндекс</p>
           <div className="mt-2 flex items-center gap-2 text-[#FAFAF9]">
-            <span className="text-[22px] font-bold">5.0</span>
-            <div className="flex gap-1 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-4 w-4 fill-current" />)}</div>
+            <span className="text-[20px] font-bold">5.0</span>
+            <div className="flex gap-0.5 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
           </div>
         </a>
       </div>
-      <article className="rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
+      <article className="min-w-0 overflow-hidden rounded-xl border border-[#1E1E22] bg-[#16161A] p-4">
         <div className="flex items-start gap-3">
           <img src={review.avatarUrl} alt={review.name} className="h-12 w-12 rounded-full object-cover" />
           <div className="min-w-0 flex-1">
@@ -611,8 +619,8 @@ function MobileReviews({ review }) {
               </div>
               <div className="flex gap-1 text-[#FFB800]">{Array.from({ length: review.rating || 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
             </div>
-            <p className="mt-3 text-sm font-medium text-[#FAFAF9]">{review.product}</p>
-            <p className="mt-3 text-sm leading-6 text-[#A0A0A5]">{review.text}</p>
+            <p className="mt-3 break-words text-sm font-medium text-[#FAFAF9]">{review.product}</p>
+            <p className="mt-3 break-words text-sm leading-6 text-[#A0A0A5]">{review.text}</p>
           </div>
         </div>
         <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex text-sm font-medium text-[#FAFAF9] underline underline-offset-4">Смотреть все отзывы</a>
@@ -744,7 +752,7 @@ export default function Home() {
     reviewUrl: AVITO_REVIEWS_URL,
   };
 
-  const currentLook = readyLooks[0] || READY_LOOKS_FALLBACK[0];
+  const currentLook = readyLooks[readyLookIndex] || readyLooks[0] || READY_LOOKS_FALLBACK[0];
   const currentHero = HERO_SLIDES[heroIndex];
 
   return (
@@ -774,7 +782,7 @@ export default function Home() {
 
       <section className="px-4 py-8 md:hidden">
         <SectionHeader title="Готовые образы" actionLabel="Все образы" actionHref={createPageUrl('LooksCatalog')} className="mb-4" />
-        <MobileReadyLook look={currentLook} activeIndex={readyLookIndex} onChange={setReadyLookIndex} />
+        <MobileReadyLook looks={readyLooks} activeIndex={readyLookIndex} onChange={setReadyLookIndex} />
       </section>
 
       <section className="px-6 py-10 md:px-10 xl:px-20">
