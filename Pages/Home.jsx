@@ -28,24 +28,24 @@ import {
 const HERO_SLIDES = [
   {
     image: 'https://images.unsplash.com/photo-1761903311461-854de9793ed6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
-    tag: 'НОВАЯ КОЛЛЕКЦИЯ 2026',
-    title: 'Экипировка\nдля тех, кто едет дальше',
+    tag: 'РќРћР’РђРЇ РљРћР›Р›Р•РљР¦РРЇ 2026',
+    title: 'Р­РєРёРїРёСЂРѕРІРєР°\nРґР»СЏ С‚РµС…, РєС‚Рѕ РµРґРµС‚ РґР°Р»СЊС€Рµ',
     subtitle:
-      'Премиальные шлемы, мотокуртки и защита для райдеров, которые выбирают не компромисс, а правильную экипировку.',
+      'РџСЂРµРјРёР°Р»СЊРЅС‹Рµ С€Р»РµРјС‹, РјРѕС‚РѕРєСѓСЂС‚РєРё Рё Р·Р°С‰РёС‚Р° РґР»СЏ СЂР°Р№РґРµСЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РІС‹Р±РёСЂР°СЋС‚ РЅРµ РєРѕРјРїСЂРѕРјРёСЃСЃ, Р° РїСЂР°РІРёР»СЊРЅСѓСЋ СЌРєРёРїРёСЂРѕРІРєСѓ.',
   },
   {
     image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
-    tag: 'ГОРОДСКОЙ СЕЗОН',
-    title: 'Городской комплект\nбез лишнего шума',
+    tag: 'Р“РћР РћР”РЎРљРћР™ РЎР•Р—РћРќ',
+    title: 'Р“РѕСЂРѕРґСЃРєРѕР№ РєРѕРјРїР»РµРєС‚\nР±РµР· Р»РёС€РЅРµРіРѕ С€СѓРјР°',
     subtitle:
-      'Точные посадки, понятные материалы и спокойный premium-визуал для ежедневных маршрутов.',
+      'РўРѕС‡РЅС‹Рµ РїРѕСЃР°РґРєРё, РїРѕРЅСЏС‚РЅС‹Рµ РјР°С‚РµСЂРёР°Р»С‹ Рё СЃРїРѕРєРѕР№РЅС‹Р№ premium-РІРёР·СѓР°Р» РґР»СЏ РµР¶РµРґРЅРµРІРЅС‹С… РјР°СЂС€СЂСѓС‚РѕРІ.',
   },
   {
     image: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600',
-    tag: 'ДАЛЬНИЕ ПОЕЗДКИ',
-    title: 'Комфорт и контроль\nна любой дистанции',
+    tag: 'Р”РђР›Р¬РќРР• РџРћР•Р—Р”РљР',
+    title: 'РљРѕРјС„РѕСЂС‚ Рё РєРѕРЅС‚СЂРѕР»СЊ\nРЅР° Р»СЋР±РѕР№ РґРёСЃС‚Р°РЅС†РёРё',
     subtitle:
-      'Шлемы, куртки и аксессуары для длинных поездок, когда важна каждая деталь комплекта.',
+      'РЁР»РµРјС‹, РєСѓСЂС‚РєРё Рё Р°РєСЃРµСЃСЃСѓР°СЂС‹ РґР»СЏ РґР»РёРЅРЅС‹С… РїРѕРµР·РґРѕРє, РєРѕРіРґР° РІР°Р¶РЅР° РєР°Р¶РґР°СЏ РґРµС‚Р°Р»СЊ РєРѕРјРїР»РµРєС‚Р°.',
   },
 ];
 
@@ -55,15 +55,15 @@ const READY_LOOKS_FALLBACK = [
     name: 'Dark Rider',
     slides: [
       {
-        description: 'Полная защита в тёмном стиле',
-        priceText: 'от 24 990 ?',
-        countText: '4 товара',
+        description: 'РџРѕР»РЅР°СЏ Р·Р°С‰РёС‚Р° РІ С‚С‘РјРЅРѕРј СЃС‚РёР»Рµ',
+        priceText: 'РѕС‚ 24 990 ?',
+        countText: '4 С‚РѕРІР°СЂР°',
         image: 'https://images.unsplash.com/photo-1569931327952-8cbcd1734ca8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
       {
-        description: 'Максимум контроля в городе',
-        priceText: 'от 26 490 ?',
-        countText: '5 товаров',
+        description: 'РњР°РєСЃРёРјСѓРј РєРѕРЅС‚СЂРѕР»СЏ РІ РіРѕСЂРѕРґРµ',
+        priceText: 'РѕС‚ 26 490 ?',
+        countText: '5 С‚РѕРІР°СЂРѕРІ',
         image: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
@@ -73,15 +73,15 @@ const READY_LOOKS_FALLBACK = [
     name: 'Urban Warrior',
     slides: [
       {
-        description: 'Городской сет с мягкой защитой',
-        priceText: 'от 19 990 ?',
-        countText: '3 товара',
+        description: 'Р“РѕСЂРѕРґСЃРєРѕР№ СЃРµС‚ СЃ РјСЏРіРєРѕР№ Р·Р°С‰РёС‚РѕР№',
+        priceText: 'РѕС‚ 19 990 ?',
+        countText: '3 С‚РѕРІР°СЂР°',
         image: 'https://images.unsplash.com/photo-1720211466012-dba5663d612d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
       {
-        description: 'Лёгкий комплект на каждый день',
-        priceText: 'от 21 490 ?',
-        countText: '4 товара',
+        description: 'Р›С‘РіРєРёР№ РєРѕРјРїР»РµРєС‚ РЅР° РєР°Р¶РґС‹Р№ РґРµРЅСЊ',
+        priceText: 'РѕС‚ 21 490 ?',
+        countText: '4 С‚РѕРІР°СЂР°',
         image: 'https://images.unsplash.com/photo-1694676043796-7ae250a81f3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
@@ -91,9 +91,9 @@ const READY_LOOKS_FALLBACK = [
     name: 'Night Cruiser',
     slides: [
       {
-        description: 'Для быстрых вечерних выездов',
-        priceText: 'от 32 490 ?',
-        countText: '5 товаров',
+        description: 'Р”Р»СЏ Р±С‹СЃС‚СЂС‹С… РІРµС‡РµСЂРЅРёС… РІС‹РµР·РґРѕРІ',
+        priceText: 'РѕС‚ 32 490 ?',
+        countText: '5 С‚РѕРІР°СЂРѕРІ',
         image: 'https://images.unsplash.com/photo-1762769665979-52caeade14a1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
@@ -103,9 +103,9 @@ const READY_LOOKS_FALLBACK = [
     name: 'Road King',
     slides: [
       {
-        description: 'Туринговый комплект без компромиссов',
-        priceText: 'от 28 990 ?',
-        countText: '4 товара',
+        description: 'РўСѓСЂРёРЅРіРѕРІС‹Р№ РєРѕРјРїР»РµРєС‚ Р±РµР· РєРѕРјРїСЂРѕРјРёСЃСЃРѕРІ',
+        priceText: 'РѕС‚ 28 990 ?',
+        countText: '4 С‚РѕРІР°СЂР°',
         image: 'https://images.unsplash.com/photo-1758615590275-9a46daafc4f0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
       },
     ],
@@ -115,16 +115,16 @@ const READY_LOOKS_FALLBACK = [
 const TELEGRAM_CHANNEL_URL = 'https://t.me/+kpx4Cn3SqUNkODIy';
 const TELEGRAM_PREVIEW_IMAGE = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200';
 const AVITO_REVIEWS_URL = 'https://www.avito.ru/brands/i175353051?src=ratings';
-const AVITO_RATING = '5 из 5';
-const AVITO_RATING_COUNT = 'На основе 175 оценок';
+const AVITO_RATING = '5 РёР· 5';
+const AVITO_RATING_COUNT = 'РќР° РѕСЃРЅРѕРІРµ 175 РѕС†РµРЅРѕРє';
 const YANDEX_REVIEWS_URL = 'https://yandex.ru/maps/org/mototom/58026783026/reviews/';
 const YANDEX_RATING = '5.0';
-const YANDEX_REVIEWS_COUNT = '500+ отзывов';
+const YANDEX_REVIEWS_COUNT = '500+ РѕС‚Р·С‹РІРѕРІ';
 const TRUST_ITEMS = [
-  { title: 'Бесплатная доставка', subtitle: 'При заказе от 10 000 ?', Icon: Truck },
-  { title: 'Сертификация', subtitle: 'ECE и DOT стандарты', Icon: ShieldCheck },
-  { title: 'Простой возврат', subtitle: '30 дней на возврат', Icon: RotateCcw },
-  { title: 'Поддержка', subtitle: 'Райдеры помогают райдерам', Icon: Headphones },
+  { title: 'Р‘РµСЃРїР»Р°С‚РЅР°СЏ РґРѕСЃС‚Р°РІРєР°', subtitle: 'РџСЂРё Р·Р°РєР°Р·Рµ РѕС‚ 10 000 ?', Icon: Truck },
+  { title: 'РЎРµСЂС‚РёС„РёРєР°С†РёСЏ', subtitle: 'ECE Рё DOT СЃС‚Р°РЅРґР°СЂС‚С‹', Icon: ShieldCheck },
+  { title: 'РџСЂРѕСЃС‚РѕР№ РІРѕР·РІСЂР°С‚', subtitle: '30 РґРЅРµР№ РЅР° РІРѕР·РІСЂР°С‚', Icon: RotateCcw },
+  { title: 'РџРѕРґРґРµСЂР¶РєР°', subtitle: 'Р Р°Р№РґРµСЂС‹ РїРѕРјРѕРіР°СЋС‚ СЂР°Р№РґРµСЂР°Рј', Icon: Headphones },
 ];
 
 const revealStyles = `
@@ -141,19 +141,19 @@ const revealStyles = `
 
 function normalizeCategoryName(name) {
   const value = String(name || '').trim().toLowerCase();
-  if (value.includes('шлем')) return 'helmets';
-  if (value.includes('куртк') || value.includes('моторубаш')) return 'jackets';
-  if (value.includes('перчат')) return 'gloves';
-  if (value.includes('ботин')) return 'boots';
-  if (value.includes('защит')) return 'protection';
-  if (value.includes('аксесс')) return 'accessories';
+  if (value.includes('С€Р»РµРј')) return 'helmets';
+  if (value.includes('РєСѓСЂС‚Рє') || value.includes('РјРѕС‚РѕСЂСѓР±Р°С€')) return 'jackets';
+  if (value.includes('РїРµСЂС‡Р°С‚')) return 'gloves';
+  if (value.includes('Р±РѕС‚РёРЅ')) return 'boots';
+  if (value.includes('Р·Р°С‰РёС‚')) return 'protection';
+  if (value.includes('Р°РєСЃРµСЃСЃ')) return 'accessories';
   return value;
 }
 
 function getConditionMeta(condition) {
   const isUsed = String(condition || 'new').toLowerCase() === 'used';
   return {
-    label: isUsed ? 'Б/У' : 'Новый',
+    label: isUsed ? 'Р‘/РЈ' : 'РќРѕРІС‹Р№',
     className: isUsed ? PRODUCT_BADGE_CLASS.used : PRODUCT_BADGE_CLASS.new,
   };
 }
@@ -197,7 +197,7 @@ function ProductCard({ item, navigate, addToCart, getCartQuantity, getMaxAllowed
             className={`${PRIMARY_BUTTON_CLASS} h-11 min-w-[132px] px-4 py-0 text-[13px] ${!canAdd ? 'cursor-not-allowed opacity-55 hover:translate-y-0 hover:shadow-none' : ''}`}
           >
             <ShoppingBag className="h-4 w-4" />
-            <span>{canAdd ? 'В корзину' : 'Лимит'}</span>
+            <span>{canAdd ? 'Р’ РєРѕСЂР·РёРЅСѓ' : 'Р›РёРјРёС‚'}</span>
           </button>
         </div>
       </div>
@@ -210,7 +210,7 @@ function ProductSection({ title, href, buttonLabel, items, navigate, addToCart, 
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Подборка</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">РџРѕРґР±РѕСЂРєР°</p>
             <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">{title}</h3>
           </div>
           <Link to={href} className={PRIMARY_BUTTON_CLASS}>
@@ -223,7 +223,7 @@ function ProductSection({ title, href, buttonLabel, items, navigate, addToCart, 
             <div key={`${title}-${item.productId}-${idx}`} className="w-[86vw] shrink-0 sm:w-auto">
               <ProductCard
                 item={item}
-                badgeText={idx === 0 ? 'Хит продаж' : ''}
+                badgeText={idx === 0 ? 'РҐРёС‚ РїСЂРѕРґР°Р¶' : ''}
                 navigate={navigate}
                 addToCart={addToCart}
                 getCartQuantity={getCartQuantity}
@@ -344,18 +344,18 @@ export default function Home() {
       const items = (setItem.productIds || []).map((id) => products.find((product) => String(product.id) === String(id))).filter(Boolean);
       const slides = items.slice(0, 4).map((product) => ({
         description: product.name,
-        priceText: `от ${formatPrice(product.price)} ?`,
-        countText: `${items.length} ${items.length === 1 ? 'товар' : items.length < 5 ? 'товара' : 'товаров'}`,
+        priceText: `РѕС‚ ${formatPrice(product.price)} ?`,
+        countText: `${items.length} ${items.length === 1 ? 'С‚РѕРІР°СЂ' : items.length < 5 ? 'С‚РѕРІР°СЂР°' : 'С‚РѕРІР°СЂРѕРІ'}`,
         image: product.image,
       }));
 
       return {
         slug: setItem.slug || `look-${idx}`,
-        name: setItem.name || `Образ ${idx + 1}`,
+        name: setItem.name || `РћР±СЂР°Р· ${idx + 1}`,
         slides: slides.length > 0 ? slides : [{
-          description: setItem.description || 'Готовый образ',
-          priceText: 'от 0 ?',
-          countText: '0 товаров',
+          description: setItem.description || 'Р“РѕС‚РѕРІС‹Р№ РѕР±СЂР°Р·',
+          priceText: 'РѕС‚ 0 ?',
+          countText: '0 С‚РѕРІР°СЂРѕРІ',
           image: setItem.coverImage || READY_LOOKS_FALLBACK[idx % READY_LOOKS_FALLBACK.length].slides[0].image,
         }],
       };
@@ -376,7 +376,7 @@ export default function Home() {
     condition: item.condition || 'new',
     image: item.image || item.image_url,
     priceText: `${formatPrice(item.price || 0)} ?`,
-    rating: `${Number(item.rating || 4.8).toFixed(1)} (${item.reviews_count || 20} отз.)`,
+    rating: `${Number(item.rating || 4.8).toFixed(1)} (${item.reviews_count || 20} РѕС‚Р·.)`,
   });
 
   const helmetProducts = useMemo(() => products.filter((item) => normalizeCategoryName(item.category) === 'helmets').slice(0, 4).map(mapProductCard), [products]);
@@ -411,7 +411,7 @@ export default function Home() {
 
   return (
     <div className="bg-[#0D0D0F] text-slate-100">
-      <Seo title="Мотоэкипировка и готовые образы" description="MOTOTOM: шлемы, мотокуртки, защита и аксессуары. Подбор экипировки и доставка по России." structuredData={homeStructuredData} />
+      <Seo title="РњРѕС‚РѕСЌРєРёРїРёСЂРѕРІРєР° Рё РіРѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹" description="MOTOTOM: С€Р»РµРјС‹, РјРѕС‚РѕРєСѓСЂС‚РєРё, Р·Р°С‰РёС‚Р° Рё Р°РєСЃРµСЃСЃСѓР°СЂС‹. РџРѕРґР±РѕСЂ СЌРєРёРїРёСЂРѕРІРєРё Рё РґРѕСЃС‚Р°РІРєР° РїРѕ Р РѕСЃСЃРёРё." structuredData={homeStructuredData} />
       <style>{revealStyles}</style>
       <section className="relative h-[640px] overflow-hidden sm:h-[700px] lg:h-[760px]">
         {HERO_SLIDES.map((item, idx) => (
@@ -427,11 +427,11 @@ export default function Home() {
             <p className="mt-5 max-w-[560px] text-sm leading-7 text-[#D6D9DF] sm:text-base sm:leading-8">{currentSlide.subtitle}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to={createPageUrl('Shop')} className={PRIMARY_BUTTON_CLASS}>
-                <span>Смотреть коллекцию</span>
+                <span>РЎРјРѕС‚СЂРµС‚СЊ РєРѕР»Р»РµРєС†РёСЋ</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to={createPageUrl('LooksCatalog')} className={SECONDARY_BUTTON_CLASS}>
-                <span>Готовые образы</span>
+                <span>Р“РѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹</span>
               </Link>
             </div>
           </div>
@@ -470,11 +470,11 @@ export default function Home() {
         <div className="mx-auto w-full max-w-[1440px]">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Каталог</p>
-              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">Категории товаров</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">РљР°С‚Р°Р»РѕРі</p>
+              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">РљР°С‚РµРіРѕСЂРёРё С‚РѕРІР°СЂРѕРІ</h3>
             </div>
             <Link to={createPageUrl('Shop')} className={SECONDARY_BUTTON_CLASS}>
-              <span>Все категории</span>
+              <span>Р’СЃРµ РєР°С‚РµРіРѕСЂРёРё</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -496,18 +496,18 @@ export default function Home() {
         </div>
       </section>
 
-      <ProductSection title="Популярные шлемы" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('Шлемы')}`} buttonLabel="Все шлемы" items={popularHelmets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
-      <ProductSection title="Популярные мотокуртки" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('Куртки')}`} buttonLabel="Все мотокуртки" items={popularJackets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
+      <ProductSection title="РџРѕРїСѓР»СЏСЂРЅС‹Рµ С€Р»РµРјС‹" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('РЁР»РµРјС‹')}`} buttonLabel="Р’СЃРµ С€Р»РµРјС‹" items={popularHelmets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
+      <ProductSection title="РџРѕРїСѓР»СЏСЂРЅС‹Рµ РјРѕС‚РѕРєСѓСЂС‚РєРё" href={`${createPageUrl('Shop')}?category=${encodeURIComponent('РљСѓСЂС‚РєРё')}`} buttonLabel="Р’СЃРµ РјРѕС‚РѕРєСѓСЂС‚РєРё" items={popularJackets} navigate={navigate} addToCart={addToCart} getCartQuantity={getCartQuantity} getMaxAllowedQty={getMaxAllowedQty} />
 
       <section data-reveal className="reveal-on-scroll px-4 py-10 sm:px-6 sm:py-12 lg:px-10 xl:px-20">
         <div className="mx-auto w-full max-w-[1440px]">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Looks</p>
-              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">Готовые образы</h3>
+              <h3 className="mt-2 text-[24px] font-semibold tracking-[-0.5px] text-[#FAFAF9] sm:text-[30px]">Р“РѕС‚РѕРІС‹Рµ РѕР±СЂР°Р·С‹</h3>
             </div>
             <Link to={createPageUrl('LooksCatalog')} className={PRIMARY_BUTTON_CLASS}>
-              <span>Смотреть все</span>
+              <span>РЎРјРѕС‚СЂРµС‚СЊ РІСЃРµ</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -531,7 +531,7 @@ export default function Home() {
               <p className="text-[30px] font-semibold tracking-[-0.8px] text-[#FAFAF9]">Avito</p>
               <p className="mt-3 text-sm text-[#8E8E95]">{AVITO_RATING_COUNT}</p>
             </div>
-            <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className={PRIMARY_BUTTON_CLASS}>Смотреть отзывы</a>
+            <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className={PRIMARY_BUTTON_CLASS}>РЎРјРѕС‚СЂРµС‚СЊ РѕС‚Р·С‹РІС‹</a>
           </div>
 
           <div className="flex flex-col gap-4">
@@ -540,10 +540,10 @@ export default function Home() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="h-14 w-14 overflow-hidden rounded-full bg-[#D0D84A] text-[#FAFAF9]">
-                      {activeReview.avatarUrl ? <img src={activeReview.avatarUrl} alt={activeReview.name || 'Покупатель'} loading="lazy" className="h-full w-full object-cover" /> : null}
+                      {activeReview.avatarUrl ? <img src={activeReview.avatarUrl} alt={activeReview.name || 'РџРѕРєСѓРїР°С‚РµР»СЊ'} loading="lazy" className="h-full w-full object-cover" /> : null}
                     </div>
                     <div>
-                      <p className="text-lg font-semibold">{activeReview.name || 'Покупатель'}</p>
+                      <p className="text-lg font-semibold">{activeReview.name || 'РџРѕРєСѓРїР°С‚РµР»СЊ'}</p>
                       <div className="mt-2 flex items-center gap-1 text-[#F4B400]">
                         {Array.from({ length: 5 }).map((_, idx) => <Star key={`active-review-star-${idx}`} className={`h-4 w-4 ${idx < Number(activeReview.rating || 0) ? 'fill-current' : 'text-[#D2C9BA]'}`} />)}
                       </div>
@@ -559,23 +559,23 @@ export default function Home() {
                   </div>
                 </div>
 
-                <p className="mt-6 text-[28px] font-medium leading-tight tracking-[-0.5px] text-[#2A2420]">«{activeReview.product}»</p>
+                <p className="mt-6 text-[28px] font-medium leading-tight tracking-[-0.5px] text-[#2A2420]">В«{activeReview.product}В»</p>
                 <p className="mt-6 min-h-[96px] text-[18px] leading-8 text-[#3A342F]">
                   {expandedReviewMap[reviewIndex] || String(activeReview.text || '').length <= 160 ? String(activeReview.text || '') : `${String(activeReview.text || '').slice(0, 160)}...`}
                 </p>
                 {String(activeReview.text || '').length > 160 ? (
                   <button type="button" onClick={() => setExpandedReviewMap((prev) => ({ ...prev, [reviewIndex]: !prev[reviewIndex] }))} className="mt-3 text-sm font-medium text-[#8B5E3C] hover:text-[#6f4a2f]">
-                    {expandedReviewMap[reviewIndex] ? 'Свернуть' : 'Читать полностью'}
+                    {expandedReviewMap[reviewIndex] ? 'РЎРІРµСЂРЅСѓС‚СЊ' : 'Р§РёС‚Р°С‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ'}
                   </button>
                 ) : null}
 
                 <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-                  <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="text-sm text-[#5E554B] underline-offset-4 hover:text-[#1C1C20] hover:underline">Отзыв Avito</a>
+                  <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="text-sm text-[#5E554B] underline-offset-4 hover:text-[#1C1C20] hover:underline">РћС‚Р·С‹РІ Avito</a>
                   <div className="flex min-w-[220px] items-center gap-3">
                     <div className="h-px flex-1 bg-[#D8D2C7]" />
                     <div className="flex items-center gap-1.5">
                       {activeReviews.map((_, idx) => (
-                        <button key={`review-dot-${idx}`} type="button" onClick={() => setReviewIndex(idx)} className={`h-1.5 rounded-full transition-all ${idx === reviewIndex ? 'w-12 bg-[#8B5E3C]' : 'w-2 bg-[#D8D2C7]'}`} aria-label={`Отзыв ${idx + 1}`} />
+                        <button key={`review-dot-${idx}`} type="button" onClick={() => setReviewIndex(idx)} className={`h-1.5 rounded-full transition-all ${idx === reviewIndex ? 'w-12 bg-[#8B5E3C]' : 'w-2 bg-[#D8D2C7]'}`} aria-label={`РћС‚Р·С‹РІ ${idx + 1}`} />
                       ))}
                     </div>
                   </div>
@@ -585,14 +585,14 @@ export default function Home() {
 
             <div className="flex flex-wrap items-center gap-4 pt-1">
               <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]">
-                <span className="text-sm font-medium text-[#C0B39F]">Москва</span>
+                <span className="text-sm font-medium text-[#C0B39F]">РњРѕСЃРєРІР°</span>
                 <span className="text-base font-semibold">{YANDEX_RATING}</span>
                 <div className="flex items-center gap-0.5 text-[#F4B400]">
                   {Array.from({ length: 5 }).map((_, idx) => <Star key={`yandex-star-${idx}`} className="h-3.5 w-3.5 fill-current" />)}
                 </div>
               </a>
               <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-3 rounded-xl border border-[#2A2A2E] bg-[#18181D] px-4 py-3 text-[#FAFAF9] transition-colors hover:border-[#54A0C5]">
-                <span className="text-sm font-medium text-[#C0B39F]">Яндекс Карты</span>
+                <span className="text-sm font-medium text-[#C0B39F]">РЇРЅРґРµРєСЃ РљР°СЂС‚С‹</span>
                 <span className="text-sm text-[#A0A0A5]">{YANDEX_REVIEWS_COUNT}</span>
               </a>
             </div>
@@ -603,12 +603,12 @@ export default function Home() {
       <section className="px-4 pb-10 sm:px-6 sm:pb-12 lg:px-10 xl:px-20">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-8 rounded-[28px] border border-[#1E1E22] bg-[linear-gradient(135deg,#121216_0%,#0d0d10_100%)] p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-10">
           <div className="max-w-[560px]">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Telegram-канал</p>
-            <h3 className="mt-4 whitespace-pre-line text-[34px] font-semibold uppercase leading-[1.04] tracking-[-1.4px] text-[#FAFAF9] sm:text-[46px]">Хотите узнавать{`\n`}о новых поступлениях{`\n`}раньше всех?</h3>
-            <p className="mt-5 max-w-[420px] text-base leading-8 text-[#A0A0A5]">В канале раньше всех показываем свежие поступления, редкие позиции и коротко рассказываем, что уже приехало в шоурум.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#54A0C5]">Telegram-РєР°РЅР°Р»</p>
+            <h3 className="mt-4 whitespace-pre-line text-[34px] font-semibold uppercase leading-[1.04] tracking-[-1.4px] text-[#FAFAF9] sm:text-[46px]">РҐРѕС‚РёС‚Рµ СѓР·РЅР°РІР°С‚СЊ{`\n`}Рѕ РЅРѕРІС‹С… РїРѕСЃС‚СѓРїР»РµРЅРёСЏС…{`\n`}СЂР°РЅСЊС€Рµ РІСЃРµС…?</h3>
+            <p className="mt-5 max-w-[420px] text-base leading-8 text-[#A0A0A5]">Р’ РєР°РЅР°Р»Рµ СЂР°РЅСЊС€Рµ РІСЃРµС… РїРѕРєР°Р·С‹РІР°РµРј СЃРІРµР¶РёРµ РїРѕСЃС‚СѓРїР»РµРЅРёСЏ, СЂРµРґРєРёРµ РїРѕР·РёС†РёРё Рё РєРѕСЂРѕС‚РєРѕ СЂР°СЃСЃРєР°Р·С‹РІР°РµРј, С‡С‚Рѕ СѓР¶Рµ РїСЂРёРµС…Р°Р»Рѕ РІ С€РѕСѓСЂСѓРј.</p>
             <a href={TELEGRAM_CHANNEL_URL} target="_blank" rel="noreferrer" className={`${PRIMARY_BUTTON_CLASS} mt-7`}>
               <Send className="h-4 w-4" />
-              Подписаться на Telegram
+              РџРѕРґРїРёСЃР°С‚СЊСЃСЏ РЅР° Telegram
             </a>
           </div>
 
@@ -625,11 +625,11 @@ export default function Home() {
             </div>
             <img src={TELEGRAM_PREVIEW_IMAGE} alt="Telegram preview" className="h-[260px] w-full object-cover" />
             <div className="space-y-4 px-5 py-5">
-              <p className="text-[15px] leading-8 text-[#1E1E22]">Скоро покажем новые шлемы, перчатки и куртки. Самые интересные позиции сначала публикуем в канале, а уже потом на сайте.</p>
-              <p className="text-[15px] font-medium text-[#1E1E22]">#новинки #экипировка</p>
+              <p className="text-[15px] leading-8 text-[#1E1E22]">РЎРєРѕСЂРѕ РїРѕРєР°Р¶РµРј РЅРѕРІС‹Рµ С€Р»РµРјС‹, РїРµСЂС‡Р°С‚РєРё Рё РєСѓСЂС‚РєРё. РЎР°РјС‹Рµ РёРЅС‚РµСЂРµСЃРЅС‹Рµ РїРѕР·РёС†РёРё СЃРЅР°С‡Р°Р»Р° РїСѓР±Р»РёРєСѓРµРј РІ РєР°РЅР°Р»Рµ, Р° СѓР¶Рµ РїРѕС‚РѕРј РЅР° СЃР°Р№С‚Рµ.</p>
+              <p className="text-[15px] font-medium text-[#1E1E22]">#РЅРѕРІРёРЅРєРё #СЌРєРёРїРёСЂРѕРІРєР°</p>
               <div className="flex flex-wrap items-center gap-3 text-sm text-[#6C655B]">
-                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">8 огонь</span>
-                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">1 лайк</span>
+                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">8 РѕРіРѕРЅСЊ</span>
+                <span className="rounded-full bg-[#E8E0D2] px-3 py-1">1 Р»Р°Р№Рє</span>
                 <span className="ml-auto text-xs">t.me/mototom</span>
               </div>
             </div>
