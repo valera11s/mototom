@@ -896,7 +896,7 @@ export default function Home() {
       <section className="hidden px-6 py-16 md:block md:px-10 xl:px-20">
         <div className="mx-auto max-w-[1440px]">
           <SectionHeader title="Готовые образы" actionLabel="Все образы" actionHref={createPageUrl('LooksCatalog')} />
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {readyLooks.slice(0, 4).map((look) => <DesktopLookCard key={look.slug} look={look} />)}
           </div>
         </div>
@@ -922,7 +922,7 @@ export default function Home() {
       <section className="hidden px-6 py-8 md:block md:px-10 xl:px-20">
         <div className="mx-auto max-w-[1440px]">
           <SectionHeader title="Популярные шлемы" actionLabel="Все шлемы" actionHref={`${createPageUrl('Shop')}?category=${encodeURIComponent('Шлемы')}`} />
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {fallbackFeatured.helmets.slice(0, 4).map((item, idx) => (
               <DesktopProductCard
                 key={item.productId}
@@ -953,7 +953,7 @@ export default function Home() {
       <section className="hidden px-6 py-8 md:block md:px-10 xl:px-20">
         <div className="mx-auto max-w-[1440px]">
           <SectionHeader title="Популярные мотокуртки" actionLabel="Все мотокуртки" actionHref={`${createPageUrl('Shop')}?category=${encodeURIComponent('Куртки')}`} />
-          <div className="grid grid-cols-4 gap-5">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {fallbackFeatured.jackets.slice(0, 4).map((item, idx) => (
               <DesktopProductCard
                 key={item.productId}
