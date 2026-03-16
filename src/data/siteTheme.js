@@ -1,12 +1,12 @@
 export const PRIMARY_BUTTON_CLASS =
-  'inline-flex items-center justify-center gap-2 rounded-xl border border-[#9fd3ec3d] bg-[linear-gradient(90deg,#4a86a5_0%,#54A0C5_68%,#6bb2d4_100%)] px-5 py-3 text-sm font-medium text-[#FAFAF9] shadow-[0_10px_30px_rgba(84,160,197,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(84,160,197,0.24)]';
+  'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(90deg,#4B8BAE_0%,#54A0C5_72%,#6EB6D5_100%)] px-5 py-3 text-sm font-medium text-[#FAFAF9] shadow-[0_10px_30px_rgba(84,160,197,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(84,160,197,0.22)]';
 
 export const SECONDARY_BUTTON_CLASS =
-  'inline-flex items-center justify-center gap-2 rounded-xl border border-[#2A2A2E] bg-[#16161A] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors hover:border-[#54A0C5] hover:bg-[#18181D]';
+  'inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#17171B] px-5 py-3 text-sm font-medium text-[#FAFAF9] transition-colors duration-200 hover:bg-[#1B1B20]';
 
 export const PRODUCT_BADGE_CLASS = {
-  new: 'bg-[#1D4ED8] text-[#EFF6FF]',
-  used: 'bg-[#1F2937] text-[#BFDBFE]',
+  new: 'bg-[#1C4F72] text-[#E7F6FF]',
+  used: 'bg-[#1F252B] text-[#B7D9EA]',
 };
 
 export const BRAND_LOGOS = {

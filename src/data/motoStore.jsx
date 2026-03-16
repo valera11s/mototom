@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const MotoStoreContext = createContext(null);
 
@@ -211,6 +211,7 @@ function normalizeCategories(raw) {
         level: item.level ?? 0,
         slug: item.slug ?? null,
         image: item.image ?? null,
+        has_sizes: item.has_sizes !== false,
       };
     })
     .filter((c) => c.name);

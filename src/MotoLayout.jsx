@@ -1,20 +1,42 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Instagram, Twitter, Youtube, X, ArrowRight, Menu, Phone, User, Check, Plus, Minus, Trash2 } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  Menu,
+  Minus,
+  Plus,
+  Search,
+  ShoppingBag,
+  Trash2,
+  User,
+  X,
+} from 'lucide-react';
 import { createPageUrl, formatPrice } from './utils.js';
 import { useMotoStore } from './data/motoStore.jsx';
 import { PRIMARY_BUTTON_CLASS, SECONDARY_BUTTON_CLASS } from './data/siteTheme.js';
+import logoTransparent from '../LOGO-transparent.png';
+
+const DESKTOP_NAV = [
+  { label: 'Шлемы', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Шлемы')}` },
+  { label: 'Куртки', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Куртки')}` },
+  { label: 'Перчатки', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Перчатки')}` },
+  { label: 'Ботинки', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Ботинки')}` },
+  { label: 'Защита', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Защита')}` },
+  { label: 'Аксессуары', href: `${createPageUrl('Shop')}?category=${encodeURIComponent('Аксессуары')}` },
+];
+
+const FOOTER_CATEGORY_LINKS = ['Каталог', 'Шлемы', 'Мотокуртки', 'Перчатки', 'Ботинки', 'Защита'];
+const FOOTER_INFO_LINKS = ['О нас', 'Возврат', 'Доставка', 'Контакты', 'Размеры'];
+const FOOTER_SOCIALS = ['Telegram', 'Avito', 'VK'];
 
 export default function MotoLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { cartCount, cartDetailed, subtotal, shipping, total, updateCartQuantity, removeFromCart, getMaxAllowedQty } = useMotoStore();
   const [cartOpen, setCartOpen] = useState(false);
-  const [cartNotice, setCartNotice] = useState(null);
-  const [callbackOpen, setCallbackOpen] = useState(false);
-  const [callbackSending, setCallbackSending] = useState(false);
-  const [callbackForm, setCallbackForm] = useState({ name: '', phone: '' });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartNotice, setCartNotice] = useState(null);
   const hideTimerRef = useRef(null);
   const clearTimerRef = useRef(null);
 
@@ -22,49 +44,13 @@ export default function MotoLayout({ children }) {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  const goCheckout = () => {
-    setCartOpen(false);
-    navigate(createPageUrl('Checkout'));
-  };
-
-  const sendCallbackRequest = async () => {
-    const name = callbackForm.name.trim();
-    const phone = callbackForm.phone.trim();
-    if (!name || !phone) return;
-
-    try {
-      setCallbackSending(true);
-      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '');
-      const response = await fetch(`${apiBase}/api/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          phone,
-          email: '',
-          message_type: 'callback',
-          message: `Заказ звонка. Телефон: ${phone}`,
-        }),
-      });
-      if (!response.ok) throw new Error('Ошибка отправки');
-      setCallbackOpen(false);
-      setCallbackForm({ name: '', phone: '' });
-    } catch (error) {
-      console.error('Callback request error:', error);
-      alert('Не удалось отправить заявку. Попробуйте еще раз.');
-    } finally {
-      setCallbackSending(false);
-    }
-  };
-
   useEffect(() => {
     const onCartAdd = (event) => {
       const productName = event?.detail?.productName || 'Товар';
       const quantity = Math.max(1, Number(event?.detail?.quantity || 1));
       setCartNotice({ productName, quantity, show: false });
-      const animateIn = () => {
-        setCartNotice((prev) => (prev ? { ...prev, show: true } : prev));
-      };
+
+      const animateIn = () => setCartNotice((prev) => (prev ? { ...prev, show: true } : prev));
       if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
         window.requestAnimationFrame(animateIn);
       } else {
@@ -73,14 +59,10 @@ export default function MotoLayout({ children }) {
 
       if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
       if (clearTimerRef.current) clearTimeout(clearTimerRef.current);
-
       hideTimerRef.current = setTimeout(() => {
         setCartNotice((prev) => (prev ? { ...prev, show: false } : prev));
       }, 1600);
-
-      clearTimerRef.current = setTimeout(() => {
-        setCartNotice(null);
-      }, 1950);
+      clearTimerRef.current = setTimeout(() => setCartNotice(null), 1950);
     };
 
     window.addEventListener('mototom:cart:add', onCartAdd);
@@ -91,6 +73,11 @@ export default function MotoLayout({ children }) {
     };
   }, []);
 
+  const goCheckout = () => {
+    setCartOpen(false);
+    navigate(createPageUrl('Checkout'));
+  };
+
   if (
     location.pathname.startsWith('/admin') ||
     location.pathname === createPageUrl('Checkout') ||
@@ -99,148 +86,85 @@ export default function MotoLayout({ children }) {
     return <>{children}</>;
   }
 
-  const isShop = location.pathname === createPageUrl('Shop');
-  const isLooks = location.pathname === createPageUrl('LooksCatalog') || location.pathname.startsWith(createPageUrl('ReadySet'));
-
-  const navLinks = [
-    { to: createPageUrl('Shop'), label: '\u041a\u0430\u0442\u0430\u043b\u043e\u0433', active: isShop },
-    { to: createPageUrl('LooksCatalog'), label: '\u041e\u0431\u0440\u0430\u0437\u044b', active: isLooks },
-    { to: createPageUrl('About'), label: '\u041e \u043d\u0430\u0441', active: location.pathname === createPageUrl('About') },
-    { to: createPageUrl('Contacts'), label: '\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b', active: location.pathname === createPageUrl('Contacts') },
-  ];
-
   return (
     <div className="min-h-screen bg-[#0D0D0F] text-slate-100">
-      {/* Header */}
-      <header className="border-b border-[#1E1E22] bg-[#0D0D0F]">
-        <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between px-4 md:h-20 md:px-8 lg:px-12">
-          {/* Logo */}
-          <Link to={createPageUrl('Home')} className="flex items-center gap-2 text-white">
-            <img src="/-3.png.webp" alt="MOTOTOM logo" className="h-9 w-9 object-contain md:h-[60px] md:w-[60px] lg:h-[72px] lg:w-[72px]" />
-            <span className="text-[16px] font-bold tracking-[0.18em] md:text-[18px] lg:text-[20px]">MOTOTOM</span>
+      <header className="sticky top-0 z-40 border-b border-[#1E1E22] bg-[#0D0D0F]/95 backdrop-blur-sm">
+        <div className="mx-auto hidden h-20 w-full max-w-[1440px] items-center justify-between gap-6 px-10 xl:flex xl:px-20">
+          <Link to={createPageUrl('Home')} className="shrink-0">
+            <img src={logoTransparent} alt="MOTOTOM" className="h-[34px] w-auto object-contain" />
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden items-center gap-6 lg:flex xl:gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`text-[14px] font-medium ${link.active ? 'text-[#54A0C5]' : 'text-slate-300 hover:text-white'}`}
-              >
-                {link.label}
+          <nav className="flex min-w-0 items-center gap-7 text-[14px] font-medium text-[#D4D4D8]">
+            {DESKTOP_NAV.map((item) => (
+              <Link key={item.label} to={item.href} className="transition-colors hover:text-white">
+                {item.label}
               </Link>
             ))}
-          </div>
+          </nav>
 
-          {/* Desktop right actions */}
-          <div className="hidden items-center gap-4 text-slate-400 lg:flex xl:gap-6">
-            <a href="tel:+74951299077" className="text-[13px] font-medium text-[#A0A0A5] hover:text-white">
-              +7 (495) 129-90-77
-            </a>
-            <button
-              type="button"
-              onClick={() => setCallbackOpen(true)}
-              className="text-[14px] font-medium text-slate-300 hover:text-white"
-            >{'\u0417\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0437\u0432\u043e\u043d\u043e\u043a'}</button>
-            <button
-              type="button"
-              onClick={() => setCartOpen(true)}
-              className="relative"
-              aria-label={'\u041a\u043e\u0440\u0437\u0438\u043d\u0430'}
-            >
+          <div className="flex items-center gap-4 text-[#FAFAF9]">
+            <button type="button" aria-label="Поиск" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#26262A] bg-[#15161A]">
+              <Search className="h-4 w-4" />
+            </button>
+            <button type="button" aria-label="Профиль" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#26262A] bg-[#15161A]">
+              <User className="h-4 w-4" />
+            </button>
+            <button type="button" onClick={() => setCartOpen(true)} aria-label="Корзина" className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#26262A] bg-[#15161A]">
               <ShoppingBag className="h-4 w-4" />
-              {cartCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#54A0C5] text-[10px] font-semibold text-[#FAFAF9]">
+              {cartCount > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#54A0C5] px-1 text-[10px] font-semibold text-[#FAFAF9]">
                   {cartCount}
                 </span>
-              )}
+              ) : null}
             </button>
           </div>
+        </div>
 
-          {/* Mobile right actions */}
-          <div className="flex items-center gap-3 lg:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(true)}
-              aria-label={'\u041e\u0442\u043a\u0440\u044b\u0442\u044c \u043c\u0435\u043d\u044e'}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-300"
-            >
-              <Menu className="h-5 w-5 text-slate-300" />
-              <span>{'\u041c\u0435\u043d\u044e'}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setCartOpen(true)}
-              className="relative"
-              aria-label={'\u041a\u043e\u0440\u0437\u0438\u043d\u0430'}
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#54A0C5] text-[10px] font-semibold text-[#FAFAF9]">
+        <div className="flex h-[72px] items-center justify-between px-4 xl:hidden">
+          <Link to={createPageUrl('Home')} className="text-[26px] font-black tracking-[-0.08em] text-[#FAFAF9]">
+            MOTOTOM
+          </Link>
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => setCartOpen(true)} aria-label="Корзина" className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#26262A] bg-[#15161A]">
+              <ShoppingBag className="h-4 w-4" />
+              {cartCount > 0 ? (
+                <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#54A0C5] px-1 text-[10px] font-semibold text-[#FAFAF9]">
                   {cartCount}
                 </span>
-              )}
+              ) : null}
+            </button>
+            <button type="button" onClick={() => setMobileMenuOpen(true)} aria-label="Меню" className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#26262A] bg-[#15161A]">
+              <Menu className="h-4 w-4" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile menu overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/60 lg:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          <nav
-            className="absolute right-0 top-0 flex h-full w-[280px] flex-col bg-[#111114] p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+      {mobileMenuOpen ? (
+        <div className="fixed inset-0 z-[60] bg-black/60 xl:hidden" onClick={() => setMobileMenuOpen(false)}>
+          <nav className="absolute right-0 top-0 flex h-full w-[280px] flex-col bg-[#111114] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <span className="text-[16px] font-bold tracking-[0.18em] text-[#FAFAF9]">MOTOTOM</span>
-              <button type="button" onClick={() => setMobileMenuOpen(false)} aria-label={'\u0417\u0430\u043a\u0440\u044b\u0442\u044c \u043c\u0435\u043d\u044e'}>
+              <span className="text-[22px] font-black tracking-[-0.08em] text-[#FAFAF9]">MOTOTOM</span>
+              <button type="button" onClick={() => setMobileMenuOpen(false)} aria-label="Закрыть">
                 <X className="h-5 w-5 text-[#A0A0A5]" />
               </button>
             </div>
 
             <div className="mt-8 flex flex-col gap-5">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`text-[16px] font-medium ${link.active ? 'text-[#54A0C5]' : 'text-slate-300'}`}
-                >
-                  {link.label}
+              {DESKTOP_NAV.map((item) => (
+                <Link key={item.label} to={item.href} className="text-[16px] font-medium text-[#D4D4D8]">
+                  {item.label}
                 </Link>
               ))}
             </div>
-
-            <div className="mt-auto flex flex-col gap-4 border-t border-[#1E1E22] pt-6">
-              <a href="tel:+74951299077" className="text-[14px] font-medium text-[#A0A0A5]">
-                +7 (495) 129-90-77
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setCallbackOpen(true);
-                }}
-                className="text-left text-[14px] font-medium text-slate-300"
-              >{'\u0417\u0430\u043a\u0430\u0437\u0430\u0442\u044c \u0437\u0432\u043e\u043d\u043e\u043a'}</button>
-            </div>
           </nav>
         </div>
-      )}
+      ) : null}
 
       <main>{children}</main>
 
-      {/* Cart notice */}
-      {cartNotice && (
-        <div
-          className={`fixed right-3 top-3 z-[70] w-[calc(100vw-1.5rem)] max-w-[360px] rounded-lg border border-[#2A2A2E] bg-[#111114] p-4 shadow-2xl transition-all duration-300 ${
-            cartNotice.show ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'
-          }`}
-        >
+      {cartNotice ? (
+        <div className={`fixed right-3 top-3 z-[70] w-[calc(100vw-1.5rem)] max-w-[360px] rounded-lg border border-[#2A2A2E] bg-[#111114] p-4 shadow-2xl transition-all duration-300 ${cartNotice.show ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'}`}>
           <div className="flex items-start gap-3">
             <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#32D58325]">
               <div className="absolute inset-0 rounded-md animate-ping bg-[#32D58322]" />
@@ -251,98 +175,93 @@ export default function MotoLayout({ children }) {
               <p className="mt-1 truncate text-[12px] font-normal text-[#A0A0A5]">
                 {cartNotice.productName} · {cartNotice.quantity} шт.
               </p>
-              <div className="mt-3 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCartOpen(true);
-                    setCartNotice(null);
-                  }}
-                  className="inline-flex h-8 items-center justify-center rounded-md bg-[#54A0C5] px-3 text-[12px] font-medium text-[#FAFAF9]"
-                >
-                  В корзину
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCartNotice((prev) => (prev ? { ...prev, show: false } : prev))}
-                  className="inline-flex h-8 items-center justify-center rounded-md border border-[#2A2A2E] px-3 text-[12px] font-medium text-[#A0A0A5]"
-                >
-                  Закрыть
-                </button>
-              </div>
-              <div className="mt-3 h-[2px] w-full overflow-hidden rounded-full bg-[#2A2A2E]">
-                <div className="h-full w-full rounded-full bg-[#32D583] animate-pulse" />
-              </div>
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
-      {/* Footer */}
-      <footer id="footer" className="bg-[#0A0A0C] px-4 pb-8 pt-10 md:px-8 lg:px-20">
-        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-8 md:gap-12">
-          <div className="w-full overflow-hidden text-center text-[52px] font-black leading-none tracking-[8px] text-[#808080] sm:text-[80px] sm:tracking-[12px] lg:text-[140px] lg:tracking-[20px]">
-            MOTOTOM
-          </div>
+      <footer id="footer" className="bg-[#0A0A0C] px-4 pb-8 pt-12 md:px-6 xl:px-20">
+        <div className="mx-auto max-w-[1440px]">
+          <div className="bg-[linear-gradient(180deg,rgba(84,160,197,0.08)_0%,rgba(10,10,12,0)_100%)] px-0 pb-10 pt-6">
+            <div className="overflow-hidden text-[52px] font-black leading-none tracking-[-0.08em] text-transparent [background:linear-gradient(90deg,#BFEFFF_0%,#54A0C5_52%,#2F5E84_100%)] [background-clip:text] [-webkit-background-clip:text] md:text-[110px] xl:text-[188px]">
+              MOTOTOM
+            </div>
 
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-[280px_1fr_1fr_1fr_1fr] lg:gap-8">
-            <div className="col-span-2 text-[13px] font-normal leading-[1.6] text-[#6B6B70] sm:col-span-3 lg:col-span-1">
+            <p className="mt-4 max-w-[560px] text-sm leading-7 text-[#8D8D93] md:text-[15px]">
               Премиальная мотоэкипировка для райдеров, которые ценят качество, безопасность и инженерную точность.
-            </div>
+            </p>
 
-            <div className="flex flex-col gap-3 text-[13px]">
-              <p className="font-semibold tracking-[1px] text-[#FAFAF9]">Магазин</p>
-              <div className="flex flex-col gap-3 text-[#6B6B70]">
-                <p>Шлемы</p><p>Куртки</p><p>Перчатки</p><p>Ботинки</p><p>Защита</p>
+            <div className="mt-8 hidden space-y-3 xl:block">
+              <div className="flex flex-wrap gap-3">
+                {FOOTER_CATEGORY_LINKS.map((item) => (
+                  <span key={item} className="inline-flex min-h-[42px] items-center rounded-full border border-[#54A0C53D] bg-[#111318] px-4 text-sm font-medium text-[#EAF8FF]">
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {FOOTER_INFO_LINKS.map((item) => (
+                  <span key={item} className="inline-flex min-h-[42px] items-center rounded-full border border-[#2A2A2E] bg-[#131418] px-4 text-sm font-medium text-[#D3D3D7]">
+                    {item}
+                  </span>
+                ))}
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 text-[13px]">
-              <p className="font-semibold tracking-[1px] text-[#FAFAF9]">Компания</p>
-              <div className="flex flex-col gap-3 text-[#6B6B70]">
-                <p>О нас</p><p>Вакансии</p><p>Пресса</p><p>Блог</p>
+            <div className="mt-8 xl:hidden">
+              <div>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#8D8D93]">Категории</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {FOOTER_CATEGORY_LINKS.map((item) => (
+                    <span key={item} className="inline-flex min-h-[42px] items-center justify-center rounded-full border border-[#54A0C53D] bg-[#111318] px-3 text-sm font-medium text-[#EAF8FF]">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#8D8D93]">Информация</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {FOOTER_INFO_LINKS.map((item) => (
+                    <span key={item} className="inline-flex min-h-[42px] items-center justify-center rounded-full border border-[#2A2A2E] bg-[#131418] px-3 text-sm font-medium text-[#D3D3D7]">
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 text-[13px]">
-              <p className="font-semibold tracking-[1px] text-[#FAFAF9]">Помощь</p>
-              <div className="flex flex-col gap-3 text-[#6B6B70]">
-                <p>Центр поддержки</p><p>Доставка</p><p>Возвраты</p><p>Таблица размеров</p>
+            <div className="mt-8 flex flex-col gap-4 border-t border-[#1E1E22] pt-6 text-xs text-[#5F5F65] md:flex-row md:items-center md:justify-between">
+              <p>© 2026 Mototom. Все права защищены.</p>
+              <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                {FOOTER_SOCIALS.map((item, idx) => (
+                  <span
+                    key={item}
+                    className={`inline-flex min-h-[38px] items-center rounded-full border px-4 text-sm font-medium ${
+                      idx === 0
+                        ? 'border-[#54A0C53D] bg-[#111826] text-[#BFEFFF]'
+                        : idx === 1
+                          ? 'border-[#4C4252] bg-[#17151B] text-[#F4EDF7]'
+                          : 'border-[#323947] bg-[#14161D] text-[#DDEBFF]'
+                    }`}
+                  >
+                    {item}
+                  </span>
+                ))}
               </div>
-            </div>
-
-            <div className="flex flex-col gap-3 text-[13px]">
-              <p className="font-semibold tracking-[1px] text-[#FAFAF9]">Правовая информация</p>
-              <div className="flex flex-col gap-3 text-[#6B6B70]">
-                <p>Политика конфиденциальности</p><p>Условия использования</p><p>Политика cookies</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-4 border-t border-[#1E1E22] pt-6 text-xs text-[#4A4A50] sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 MotoTom. Все права защищены.</p>
-            <div className="flex items-center gap-4">
-              <Instagram className="h-[18px] w-[18px]" />
-              <Twitter className="h-[18px] w-[18px]" />
-              <Youtube className="h-[18px] w-[18px]" />
             </div>
           </div>
         </div>
       </footer>
 
-      {/* Cart drawer */}
-      {cartOpen && (
+      {cartOpen ? (
         <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setCartOpen(false)}>
-          <aside
-            className="absolute right-0 top-0 flex h-full w-full max-w-[420px] flex-col border-l border-[#1E1E22] bg-[#111114]"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <aside className="absolute right-0 top-0 flex h-full w-full max-w-[420px] flex-col border-l border-[#1E1E22] bg-[#111114]" onClick={(e) => e.stopPropagation()}>
             <div className="flex h-16 items-center justify-between border-b border-[#1E1E22] px-6">
               <div className="flex items-center gap-2.5">
                 <h2 className="text-base font-semibold text-[#FAFAF9]">Корзина</h2>
-                <span className="rounded-full bg-[#54A0C530] px-2 py-0.5 text-[10px] text-[#54A0C5]">
-                  {cartCount} товара
-                </span>
+                <span className="rounded-full bg-[#54A0C530] px-2 py-0.5 text-[10px] text-[#54A0C5]">{cartCount} товара</span>
               </div>
               <button type="button" onClick={() => setCartOpen(false)} className="text-[#A0A0A5]">
                 <X className="h-5 w-5" />
@@ -350,45 +269,28 @@ export default function MotoLayout({ children }) {
             </div>
 
             <div className="flex-1 space-y-5 overflow-y-auto p-6">
-              {cartDetailed.length === 0 && <p className="text-sm text-[#A0A0A5]">Корзина пуста</p>}
+              {cartDetailed.length === 0 ? <p className="text-sm text-[#A0A0A5]">Корзина пуста</p> : null}
               {cartDetailed.map((entry) => (
                 <div key={entry.key} className="space-y-5">
                   <div className="flex gap-4">
-                    <img
-                      src={entry.product.image}
-                      alt={entry.product.name}
-                      className="h-20 w-20 rounded-md object-cover"
-                    />
+                    <img src={entry.product.image} alt={entry.product.name} className="h-20 w-20 rounded-md object-cover" />
                     <div className="flex flex-1 flex-col gap-2">
                       <p className="text-sm text-[#FAFAF9]">{entry.product.name}</p>
-                      <p className="text-xs text-[#A0A0A5]">
-                        Размер: {entry.size || 'M'} · {entry.product.brand}
-                      </p>
+                      <p className="text-xs text-[#A0A0A5]">Размер: {entry.size || 'M'} · {entry.product.brand}</p>
                       <div className="flex items-center justify-between">
                         <div className="inline-flex items-center gap-2 rounded-md border border-[#2A2A2E] px-2 py-1 text-xs text-[#FAFAF9]">
-                          <button
-                            type="button"
-                            onClick={() => updateCartQuantity(entry.key, entry.quantity - 1)}
-                          >
+                          <button type="button" onClick={() => updateCartQuantity(entry.key, entry.quantity - 1)}>
                             <Minus className="h-3.5 w-3.5" />
                           </button>
                           <span>{entry.quantity}</span>
-                          <button
-                            type="button"
-                            disabled={entry.quantity >= getMaxAllowedQty(entry.product.id)}
-                            onClick={() => updateCartQuantity(entry.key, entry.quantity + 1)}
-                          >
+                          <button type="button" disabled={entry.quantity >= getMaxAllowedQty(entry.product.id)} onClick={() => updateCartQuantity(entry.key, entry.quantity + 1)}>
                             <Plus className="h-3.5 w-3.5" />
                           </button>
                         </div>
                         <span className="text-sm text-[#FAFAF9]">{formatPrice(entry.lineTotal)} ₽</span>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFromCart(entry.key)}
-                      className="text-[#A0A0A5]"
-                    >
+                    <button type="button" onClick={() => removeFromCart(entry.key)} className="text-[#A0A0A5]">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -404,99 +306,23 @@ export default function MotoLayout({ children }) {
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-[#A0A0A5]">Доставка</span>
-                <span className="text-[#32D583]">
-                  {shipping === 0 ? 'Бесплатно' : `${formatPrice(shipping)} ₽`}
-                </span>
+                <span className="text-[#32D583]">{shipping === 0 ? 'Бесплатно' : `${formatPrice(shipping)} ₽`}</span>
               </div>
               <div className="h-px bg-[#1E1E22]" />
               <div className="flex items-center justify-between">
                 <span className="text-[15px] font-semibold text-[#FAFAF9]">Итого</span>
                 <span className="text-[18px] font-bold text-[#FAFAF9]">{formatPrice(total)} ₽</span>
               </div>
-              <button
-                type="button"
-                onClick={goCheckout}
-                className={`${PRIMARY_BUTTON_CLASS} h-12 w-full`}
-              >
+              <button type="button" onClick={goCheckout} className={`${PRIMARY_BUTTON_CLASS} h-12 w-full`}>
                 Оформить заказ <ArrowRight className="h-4 w-4" />
               </button>
-              <button
-                type="button"
-                onClick={() => setCartOpen(false)}
-                className={`${SECONDARY_BUTTON_CLASS} h-10 w-full text-[13px] text-[#A0A0A5]`}
-              >
+              <button type="button" onClick={() => setCartOpen(false)} className={`${SECONDARY_BUTTON_CLASS} h-10 w-full text-[13px] text-[#A0A0A5]`}>
                 Продолжить покупки
               </button>
             </div>
           </aside>
         </div>
-      )}
-
-      {/* Callback modal */}
-      {callbackOpen && (
-        <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 px-4"
-          onClick={() => setCallbackOpen(false)}
-        >
-          <div
-            className="relative w-full max-w-[520px] overflow-hidden rounded-2xl border border-[#2A2A2E] bg-[#111114] p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="pointer-events-none absolute -right-12 -top-14 h-40 w-40 rounded-full bg-[#54A0C52b] blur-2xl" />
-            <div className="pointer-events-none absolute -left-12 -bottom-14 h-40 w-40 rounded-full bg-[#54A0C51f] blur-2xl" />
-            <span className="relative inline-flex items-center rounded-full border border-[#54A0C560] bg-[#54A0C520] px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] text-[#9dd7ef]">
-              CALLBACK
-            </span>
-            <h3 className="relative mt-3 text-[24px] font-bold text-[#FAFAF9]">Закажите звонок</h3>
-            <p className="relative mt-1 text-[13px] leading-relaxed text-[#A0A0A5]">
-              Оставьте контакты, и менеджер перезвонит в ближайшее время. Поможем с выбором и ответим на вопросы.
-            </p>
-
-            <div className="mt-4 space-y-3">
-              <label className="relative block">
-                <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d7d84]" />
-                <input
-                  type="text"
-                  value={callbackForm.name}
-                  onChange={(e) => setCallbackForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Ваше имя"
-                  className="h-11 w-full rounded-lg border border-[#2A2A2E] bg-[#16161A] pl-10 pr-3 text-sm text-[#FAFAF9] placeholder:text-[#6B6B70] outline-none focus:border-[#54A0C5]"
-                />
-              </label>
-              <label className="relative block">
-                <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7d7d84]" />
-                <input
-                  type="tel"
-                  value={callbackForm.phone}
-                  onChange={(e) => setCallbackForm((prev) => ({ ...prev, phone: e.target.value }))}
-                  placeholder="Телефон"
-                  className="h-11 w-full rounded-lg border border-[#2A2A2E] bg-[#16161A] pl-10 pr-3 text-sm text-[#FAFAF9] placeholder:text-[#6B6B70] outline-none focus:border-[#54A0C5]"
-                />
-              </label>
-            </div>
-
-            <div className="mt-5 flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setCallbackOpen(false)}
-                className="h-10 rounded-lg border border-[#2A2A2E] px-4 text-sm font-medium text-[#A0A0A5]"
-              >
-                Позже
-              </button>
-              <button
-                type="button"
-                disabled={callbackSending || !callbackForm.name.trim() || !callbackForm.phone.trim()}
-                onClick={sendCallbackRequest}
-                className={`${PRIMARY_BUTTON_CLASS} h-10 px-4 py-0 disabled:opacity-60`}
-              >
-                {callbackSending ? 'Отправка...' : 'Создать заявку'}
-                {!callbackSending ? <ArrowRight className="h-4 w-4" /> : null}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      ) : null}
     </div>
   );
 }
-
