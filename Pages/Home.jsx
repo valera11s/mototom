@@ -567,14 +567,14 @@ function DesktopReviews({ review, reviewIndex, totalReviews, onPrev, onNext, can
               <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
                 {Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-5 w-5 fill-current" />)}
               </div>
-              <p className="mt-4 text-sm text-[#A0A0A5]">На основе отзывов Avito</p>
+              <p className="mt-4 text-sm text-[#A0A0A5]">Avito - 179+ ??????</p>
             </div>
             <div className="rounded-[12px] border border-[#1E1E22] bg-[#16161A] p-5 text-center">
               <p className="text-[28px] font-bold tracking-[-0.03em] text-[#FAFAF9]">5.0</p>
               <div className="mt-3 flex justify-center gap-1 text-[#FFB800]">
                 {Array.from({ length: 5 }).map((_, idx) => <Star key={`y-${idx}`} className="h-5 w-5 fill-current" />)}
               </div>
-              <p className="mt-4 text-sm text-[#A0A0A5]">Яндекс Карты</p>
+              <p className="mt-4 text-sm text-[#A0A0A5]">?????? - 79+ ??????</p>
             </div>
           </div>
           <div>
@@ -648,14 +648,14 @@ function MobileReviews({ review, reviewIndex, totalReviews, onPrev, onNext, canG
     <section className="space-y-4 px-4 py-8 md:hidden">
       <div className="grid grid-cols-2 gap-2">
         <a href={AVITO_REVIEWS_URL} target="_blank" rel="noreferrer" className="min-w-0 rounded-xl border border-[#1E1E22] bg-[#16161A] p-3">
-          <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">Avito</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">Avito - 179+</p>
           <div className="mt-2 flex items-center gap-2 text-[#FAFAF9]">
             <span className="text-[20px] font-bold">5.0</span>
             <div className="flex gap-0.5 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
           </div>
         </a>
         <a href={YANDEX_REVIEWS_URL} target="_blank" rel="noreferrer" className="min-w-0 rounded-xl border border-[#1E1E22] bg-[#16161A] p-3">
-          <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">Яндекс</p>
+          <p className="text-xs uppercase tracking-[0.16em] text-[#A0A0A5]">?????? - 79+</p>
           <div className="mt-2 flex items-center gap-2 text-[#FAFAF9]">
             <span className="text-[20px] font-bold">5.0</span>
             <div className="flex gap-0.5 text-[#FFB800]">{Array.from({ length: 5 }).map((_, idx) => <Star key={idx} className="h-3.5 w-3.5 fill-current" />)}</div>
